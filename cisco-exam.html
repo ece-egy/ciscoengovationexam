@@ -381,6 +381,31 @@ position: relative;
         display: none !important;
     }
 }
+		@page {
+    size: A4 landscape;
+    margin: 0;
+}
+
+@media print {
+    html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 297mm;
+        height: 210mm;
+        overflow: hidden;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    #certificate-area {
+        margin: 6mm auto 0 auto !important;
+        zoom: 0.95;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+}
     </style>
 </head>
 <body>
