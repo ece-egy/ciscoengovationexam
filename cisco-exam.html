@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cisco Login| CCNA200-301 EXAM</title>
+    <!-- استدعاء مكتبة تحويل الويب إلى PDF بشكل مباشر وآمن -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+	<link href="https://googleapis.com" rel="stylesheet">
+	<link rel="icon" href="/auth/resources/m1kk0/login/skillsforall-theme/img/favicon.ico">
+    <style>
+        :root { --cisco-blue: #049fd9; --cisco-dark: #0d233a; --dark: #333; --light: #f4f6f9; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--light); margin: 3px; padding: 30px; direction: ltr; text-align: left; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 6px 17px rgba(0,0,0,0.1);
+		}
+        .screen { display: none; } .active { display: block; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; text-align: right; direction: rtl; }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 10px; box-sizing: border-box; }
+        .auth-toggle { text-align: center; margin-top: 15px; font-size: 14px; color: #555; direction: rtl; }
+        .auth-toggle span { color: var(--cisco-blue); cursor: pointer; font-weight: bold; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--cisco-dark); padding-bottom: 15px; margin-bottom: 20px; }
+        .timer { font-size: 18px; font-weight: bold; color: #d9534f; background: #fdf7f7; padding: 5px 15px; border-radius: 5px; border: 1px solid #d9534f; }
+        .question-box { margin-bottom: 25px; padding: 20px; border: 1px solid #e1e4e8; border-radius: 6px; background-color: #fafbfc; }
+        .arabic-text { direction: rtl; text-align: right; color: #555; margin-top: 8px; font-size: 15px; }
+        .options-list { list-style: none; padding: 0; margin: 0; }
+        .option-item { margin-bottom: 10px; padding: 12px; border: 1px solid #d1d5da; border-radius: 4px; background: #fff; cursor: pointer; display: flex; align-items: center; }
+        .option-item input { margin-right: 12px; }
+        .btn { background-color: var(--cisco-dark); color: white; border: none; padding: 12px 25px; font-size: 16px; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold; text-align: center; display: block; box-sizing: border-box; }
+        .btn:hover { background-color: #163656; }
+        .btn-pdf { background-color: #28a745; margin-top: 20px; }
+
+       /* التصميم الجرافيكي للشهادة الأفقية المطابق تماماً للصورة المعطاة */
+#certificate-area { 
+    width: 1100px; 
+    height: 710px; 
+    background-color: #fff; 
+    /* إدراج التمويهات الشبكية الانسيابية المشبحة فائقة الدقة الممتدة على الهيدر بالكامل */
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://w3.org" viewBox="0 0 1000 707" preserveAspectRatio="none"><path d="M 0,160 C 300,180 450,20 1000,150 L 1000,0 L 0,0 Z" fill="%23049fd9" opacity="0.025"/><path d="M 0,0 C 350,140 700,40 1000,260 L 1000,0 Z" fill="%231b365d" opacity="0.015"/><path d="M 150,0 C 400,220 750,110 1000,380 L 1000,0 Z" fill="%2360bc44" opacity="0.01"/><path d="M 650,0 C 800,90 900,40 1000,120 L 1000,0 Z" fill="%23f3a623" opacity="0.02"/><g transform="translate(65, 55)" opacity="0.035"><rect x="0" y="24" width="3" height="8" fill="%23005073"/><rect x="6" y="16" width="3" height="16" fill="%23005073"/><rect x="12" y="6" width="3" height="26" fill="%23005073"/><rect x="18" y="13" width="3" height="19" fill="%23005073"/><rect x="24" y="21" width="3" height="11" fill="%23005073"/><rect x="30" y="13" width="3" height="19" fill="%23005073"/><rect x="36" y="6" width="3" height="26" fill="%23005073"/><rect x="42" y="16" width="3" height="16" fill="%23005073"/><rect x="48" y="24" width="3" height="8" fill="%23005073"/></g></svg>');
+    background-size: cover;
+    background-repeat: no-repeat;
+    padding: 35px 29px; 
+    box-sizing: border-box; 
+    position: relative; 
+    margin: 1px auto; 
+    font-family: 'Arial', sans-serif; 
+    text-align: left; 
+    color: #222; 
+    overflow: hidden; 
+    border: 2px solid #002244; 
+    box-shadow: inset 0 0 0 12px #fff, inset 0 0 0 14px #002244; 
+
+}
+.geometry-container { position: absolute; top: -40px; right: -70px; width: 300px; height: 400px; pointer-events: none; }
+.cert-header-layout { display: flex; align-items: center; margin-bottom: 35px; position: relative; z-index: 2; }
+
+/* معايرة وضبط لوجو سيسكو البارز المتناسق */
+/* معايرة وضبط لوجو سيسكو البارز المتناسق */
+.cert-header-layout { 
+    display: flex; 
+    align-items: center; 
+    margin-bottom: 35px; 
+    position: relative; 
+    z-index: 1; 
+}
+
+/* تعديل حاوية اللوجو لتناسب الهيدر مباشرة دون الحاجة لـ scale خارجي يسبب الاختفاء */
+.cisco {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: auto;
+    margin: 0; /* إلغاء الهوامش الكبيرة التي طردت اللوجو خارج الشهادة */
+}
+
+/* ضبط شريط الأعمدة ليكون مصفوفاً أفقياً وبمقاس مصغر جداً */
+.cisco-bars-flex {
+    display: flex;
+    align-items: flex-end;
+    height: 40px; /* تحديد أقصى ارتفاع للوجو */
+    margin-bottom: 5px;
+}
+
+.line {
+    width: 4.5px; /* تقليل عرض الأعمدة */
+    background-color:#006282; /* اللون الأزرق الخاص بك */
+    border-radius: 4px;
+    display: inline-block;
+    margin: 0 2px; /* مسافة بينية متناسقة */
+}
+
+/* ضبط أطوال الأعمدة بدقة للحجم الصغير داخل الشهادة */
+.one { height: 7px; }
+.two { height: 16px; }
+.three { height: 29px;
+ top: 4px;
+position: relative;
+ }
+
+/* ضبط كلمة cisco المعتمدة أسفل الأعمدة لتكون صغيرة وباللون الأزرق الرسمي متناسقة مع الشهادة */
+.cisco-text {
+    font-family: Arial, sans-serif;
+    font-size: 21px;
+    font-weight: bold;
+    text-transform: lowercase; /* تحويل الحروف لصغيرة مثل اللوجو الأصلي بالشهادات */
+    color: #a30000;
+    text-align: center;
+    letter-spacing: 0.5px;
+    margin: 0;
+    line-height: 1;
+}
+.lines-watermark-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  opacity: 0.00; /* تحكم في شفافية العلامة من هنا */
+  pointer-events: none;
+  
+ /* دمج الخطوط المموجة في أعلى اليمين مع تدرج ناعم جداً */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://w3.org' viewBox='0 0 400 300' width='100%25' height='100%25'%3E%3Cpath d='M150 0 C 220 80, 300 40, 400 90 M 180 0 C 240 90, 310 50, 400 110 M 210 0 C 260 100, 320 60, 400 130 M 240 0 C 280 110, 330 70, 400 150 M 270 0 C 300 120, 340 80, 400 170 M 300 0 C 320 130, 350 90, 400 190 M 330 0 C 340 140, 360 100, 400 210' fill='none' stroke='%23e2e8f0' stroke-width='0.75' opacity='0.7'/%3E%3C/svg%3E");
+    
+    /* ضبط تموضع الموجات لتبدأ وتتركز في أعلى اليمين فقط كما في الصورة */
+    background-repeat: no-repeat;
+    background-position: top right;
+    background-size: 55% auto; /* التحكم في المساحة التي تغطيها الموجات */
+
+}
+/* طبقة الخطوط المائية الخلفية للهيدر بالكامل */
+.lines-watermark-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  opacity: 0.4; /* تم رفع الشفافية لتظهر التمويجة بوضوح في كامل الهيدر */
+  pointer-events: none; /* لمنع التشويش على تحديد النصوص بالماوس ومنع حجب الضغطات عن الأزرار */
+  
+  /* تم إصلاح رابط xmlns ليعمل المتصفح بشكل سليم */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://w3.org' viewBox='0 0 1440 400' width='100%25' height='100%25' preserveAspectRatio='none'%3E%3Cpath d='M0,96 C240,140 480,40 720,120 C960,200 1200,60 1440,110 L1440,0 L0,0 Z' fill='none' stroke='%23007aa6' stroke-width='0.6' opacity='0.4'/%3E%3Cpath d='M0,150 C300,90 600,210 900,130 C1200,50 1350,170 1440,120' fill='none' stroke='%2300b4d8' stroke-width='0.5' opacity='0.3'/%3E%3Cpath d='M0,40 C200,100 500,20 800,150 C1100,280 1300,110 1440,160' fill='none' stroke='%23cbd5e1' stroke-width='0.7' opacity='0.5'/%3E%3C/svg%3E");
+    
+  background-repeat: no-repeat;
+  background-size: 100% 100%; /* جعل الموجات تتمدد لتملأ أبعاد الهيدر بالكامل */
+  background-position: center center;
+}
+
+/* لضمان بقاء النصوص واضحة وفوق الأمواج */
+.lines-watermark-svg h1 {
+  position: relative;
+  z-index: 2;
+  font-family: sans-serif;
+  color: #0f172a;
+}
+/* الحاوية الأساسية للتوقيع والتاريخ */
+.handwritten-signature-wrapper {
+    display: inline-block;
+    text-align: left;
+    padding-left: 50px;
+    position: relative;
+    /* ميلان خفيف جداً (درجة واحدة) لمحاكاة ميل اليد أثناء التوقيع الحقيقي */
+    transform: rotate(-1.5deg); 
+    user-select: none; /* لمنع تحديد النص لتأكيد المظهر الصوري الموقّع */
+}
+
+/* تنسيق اسم الدكتور بخط يدوي انسيابي */
+.signer-name {
+    font-family: 'Caveat', 'Brush Script MT', cursive, sans-serif;
+    font-size: 20px; /* تكبير الحجم قليلاً لأن خطوط اليد تكون أدق */
+    font-weight: 600;
+    color: #1e293b; /* لون حبر داكن (رمادي داكن قريباً من الحبر الجاف) */
+    display: block;
+    margin-bottom: 2px; /* تقريب التاريخ من التوقيع */
+    letter-spacing: 0.5px;
+}
+
+/* تنسيق التاريخ ليكون متداخلاً أسفل التوقيع بخط اليد */
+.cert-date-handwritten {
+    font-family: 'Caveat', 'Brush Script MT', cursive, sans-serif;
+    font-size: 8px;
+    font-weight: 500;
+    color: #334155; /* لون حبر أخف بنسبة بسيطة جداً لمحاكاة ضغط القلم */
+    display: block;
+    padding-left: 45px; /* إزاحة التاريخ لليمين قليلاً ليظهر منسقاً تحت الاسم */
+    opacity: 0.9;
+}
+
+/* الحاوية الخارجية للختم */
+.cisco-accepted-stamp {
+    display: inline-block;
+    padding: 6px;
+    border: 4px double #0f766e; /* حواف مزدوجة كالأختام الحقيقية (لون أخضر تيل داكن) */
+    border-radius: 8px;
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    
+    /* زاوية ميلان الختم لإعطاء طابع يدوي بشري حقيقي */
+    transform: rotate(-12deg); 
+    
+    /* الشفافية والتأثير الحبري المتلاشي الناعم */
+    opacity: 0.85;
+    mix-blend-mode: multiply; /* يجعل الختم يتداخل مع الخطوط المموجة تحته كالحبر الحقيقي */
+    
+    /* إضافة خشونة خفيفة على الختم لمحاكاة حبر الأختام الجاف */
+    background: radial-gradient(circle, transparent 20%, rgba(255,255,255,0.05) 20%) 0 0,
+                radial-gradient(circle, transparent 20%, rgba(255,255,255,0.05) 20%) 4px 4px;
+    background-size: 8px 8px;
+    background-color: rgba(15, 118, 110, 0.03);
+    
+    box-shadow: 0 0 0 2px #0f766e; /* الإطار الخارجي الرفيع المكمل للختم */
+    user-select: none;
+    margin: 20px;
+}
+
+/* الحاوية الداخلية لضبط المسافات */
+.stamp-inner {
+    border: 2px solid #0f766e;
+    padding: 8px 15px;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* النص العلوي الصغير */
+.stamp-top-text {
+    font-size: 8px;
+    font-weight: 800;
+    color: #0f766e;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+}
+
+/* الكلمة الرئيسية للختم */
+.stamp-main-text {
+    font-size: 25px;
+    font-weight: 900;
+    color: #0f766e;
+    margin: 0;
+    padding: 2px 0;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    line-height: 1;
+    border-top: 2px solid #0f766e;
+    border-bottom: 2px solid #0f766e;
+    width: 100%;
+}
+
+/* تاريخ الاعتماد أسفل الختم */
+.stamp-date {
+    font-size: 10px;
+    font-weight: 800;
+    color: #0f766e;
+    letter-spacing: 1.5px;
+    margin-top: 4px;
+}
+/* الحاوية المصغرة للوجو بالكامل */
+.engovation-logo-mini {
+    position: absolute;
+    top: 0px;   /* مسافة البعد عن الحافة العلوية للشهادة */
+    right: -725px;  /* دفع الشعار بالكامل لأقصى اليمين */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent; /* إزالة الخلفية الداكنة وجعلها شفافة بالكامل */
+    padding: 0;
+    width: 135px; /* الحجم الصغير المحفوظ */
+    box-sizing: border-box;
+    text-align: center;
+    z-index: 20; /* لضمان ظهوره فوق الخطوط المموجة في الخلفية */
+}
+
+/* تصغير أبعاد رسمة الـ SVG بدقة */
+.engovation-svg-mini {
+    width: 90%;
+    max-width: 90px; /* حجم الأيقونة الرسومية */
+    height: auto;
+    margin-bottom: -4px;
+}
+/* حاوية النصوص المصغرة */
+.logo-text-mini {
+    width: 100%;
+    margin-top: 0px;
+}
+
+/* اسم الشركة بحجم صغير وخط عريض ومقروء */
+.brand-name-mini {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 20px; /* حجم الخط المصغر */
+    font-weight: 900;
+    margin: 0;
+    padding: 0;
+    letter-spacing: -0.2px;
+    line-height: 1;
+    filter: drop-shadow(0px 5px 2px rgba(0, 0, 0, 0.5));
+}
+
+.yellow-part { color: #f5b316; }
+.white-part { color: #ffffff; }
+
+/* السلوجان السفلي الصغير جداً والموزع بنسق احترافي تحت الاسم */
+.brand-slogan-mini {
+    font-family: 'Poppins', sans-serif;
+    font-size: 5.8px; /* حجم دقيق للغاية ليناسب العرض المصغر */
+    font-weight: 700;
+    color: #64748b;
+    margin: 10px 0 20 0;
+    padding: 10;
+    text-transform: uppercase;
+    letter-spacing: 0.9px; /* الحفاظ على مسافة التمدد المتوازي أفقياً */
+    filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.3));
+}
+
+.brand-divider { width: 1px; height: 32px; background-color: #aaa; margin: 0 12px; }
+.brand-sub-title { font-size: 14px; color: #049fd9; line-height: 1.1; }
+.brand-sub-title span { display: block; font-size: 16px; font-weight: ; color: #049fd9; }
+.cert-main-head { font-size: 32px; font-weight: bold; color: #062b53; margin-bottom: 30px; position: relative; z-index: 2; }
+.student-name-highlight { font-size: 28px; color: #049fd9; margin-bottom: 25px; position: relative; z-index: 2; }
+.completion-statement { font-size: 16px; color: #555; line-height: 1.5; margin-bottom: 30px; max-width: 620px; position: relative; z-index: 2; }
+.completion-statement font { font-weight: bold; color: #222; }
+.objectives-container { display: flex; justify-content: space-between; max-width: 820px; margin-bottom: 40px; position: relative; z-index: 2; }
+.objectives-column { width: 48%; }
+.objectives-column p { font-size: 12.5px; color: #444; line-height: 1.5; margin: 0 0 12px 0; padding-left: 12px; position: relative; }
+.objectives-column p::before { content: "•"; position: absolute; left: 0; color: #555; font-weight: bold; }
+.cert-footer-layout { display: flex; justify-content: space-between; align-items: flex-end; position: absolute; bottom: 55px; width: 870px; z-index: 2; }
+
+/* تفعيل كتل الفوتر الجرافيكية المكتملة */
+.left-footer-badges { display: flex; align-items: center; gap: 20px; }
+.verified-badge-cisco { width: 90px; height: 90px; border-radius: 10px; background: linear-gradient(#28a745); padding: 10px; box-sizing: border-box; color: white; text-align: center; }
+.v-badge-top { font-size: 7px; font-weight: bold; opacity: 0.9; }
+.v-badge-mid { font-size: 12px; font-weight: bold; margin: 4px 0; }
+.v-badge-bottom { font-size: 7px; background: rgba(255,255,255,0.2); padding: 1px 3px; border-radius: 2px; display: inline-block; margin-top: 14px; }
+.qr-code-wrapper { text-align: center; font-size: 9px; color: #555; }
+.qr-mock-box { width: 70px; height: 70px; border: 1px solid #ddd; background: repeating-conic-gradient(#000 0% 25%, #fff 0% 50%) 50% / 8px 8px; margin: 0 auto 4px auto; }
+.sig-underline-node { border-top: 1px solid #aaa; width: 260px; margin-top: 3px; padding-top: 5px; font-size: 12px; font-weight: bold; color: #222; }
+.sig-title-sub { font-size: 11px; color: #666; font-weight: normal; margin-top: 2px; }
+.issuance-date-node { font-size: 12px; color: #222; font-weight: bold; margin-top: 15px; }
+@media print {
+    /* 1. إجبار الطابعة على اختيار الاتجاه العرضي Landscape وإلغاء الحواف الهامشية المتصفحية */
+    @page {
+        size: A4 landscape !important;
+        margin: 15mm;
+		 
+    }
+    
+    /* 2. إخفاء أي عنصر خارج الشهادة (مثل أزرار الطباعة، خلفية الموقع، الإعلانات) */
+    body * {
+        visibility: hidden;
+    }
+    
+    /* 3. إظهار الشهادة ومحتوياتها الداخلية فقط */
+    #certificate-area, #certificate-area * {
+	
+        visibility: visible;
+    }
+    
+    /* 4. حفر موقع الشهادة في النقطة صفر للورقة وتمديدها لتملأ الورقة بالكامل */
+    #certificate-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 98.4vh;
+        box-shadow: none; /* إزالة الظلال لمنع الهدر الحبري */
+      /* تثبيت ظهور الإطار كعنصر مطبوع أساسي */
+        border: 12px double #007aa6 !important; 
+        outline: 2px solid #0f172a !important;
+        box-sizing: border-box;
+    
+		
+    }
+    
+    /* إخفاء زر الطباعة نهائياً في الورقة */
+    .no-print-btn {
+        display: none !important;
+    }
+}
+    </style>
+</head>
+<body>
+<div class="container">
+    
+    <!-- شاشة تسجيل الدخول -->
+    <div id="login-screen" class="screen active">
+        <div class="auth-form">
+            <h2 align="Center">تسجيل الدخول / Login</h2>
+			 <!-- لوجو سيسكو المطور الصغير المدمج -->
+    <div class="cisco">
+        <div class="cisco-bars-flex">
+            <span class="line one"></span>
+            <span class="line two"></span>
+            <span class="line three"></span>
+            <span class="line two"></span>
+            <span class="line one"></span>
+            <span class="line two"></span>
+            <span class="line three"></span>
+            <span class="line two"></span>
+            <span class="line one"></span>
+        </div>
+        <p class="cisco-text">cisco</p>
+    </div>
+            <div class="form-group"><label>البريد الإلكتروني</label><input type="email" id="login-email" required></div>
+            <div class="form-group"><label>كلمة المرور</label><input type="password" id="login-pass" required></div>
+            <button class="btn" onclick="handleLogin()">تسجيل الدخول</button>
+            <div class="auth-toggle">ليس لديك حساب؟ <span onclick="switchScreen('register-screen')">سجل الآن هنا</span></div>
+        </div>
+    </div>
+
+    <!-- شاشة حساب جديد -->
+    <div id="register-screen" class="screen">
+        <div class="auth-form">
+            <h2 align="Center">حساب جديد / Register</h2>
+			 <!-- لوجو سيسكو المطور الصغير المدمج -->
+    <div class="cisco">
+        <div class="cisco-bars-flex">
+            <span class="line one"></span>
+            <span class="line two"></span>
+            <span class="line three"></span>
+            <span class="line two"></span>
+            <span class="line one"></span>
+            <span class="line two"></span>
+            <span class="line three"></span>
+            <span class="line two"></span>
+            <span class="line one"></span>
+        </div>
+        <p class="cisco-text">cisco</p>
+    </div>
+            <div class="form-group"><label>الاسم الكامل بالإنجليزية (سيظهر في الشهادة)</label><input type="text" id="reg-name" placeholder="E.g. Mohanad Al-mothafer" required></div>
+            <div class="form-group"><label>البريد الإلكتروني</label><input type="email" id="reg-email" required></div>
+            <div class="form-group"><label>كلمة المرور</label><input type="password" id="reg-pass" required></div>
+            <button class="btn" onclick="handleRegister()">إنشاء الحساب</button>
+            <div class="auth-toggle">لديك حساب بالفعل؟ <span onclick="switchScreen('login-screen')">تسجيل الدخول</span></div>
+        </div>
+    </div>
+
+    <!-- شاشة الامتحان والمؤقت التنازلي -->
+    <div id="exam-screen" class="screen">
+        <div class="header">
+            <div><div class="logo">CCNA Course EXAM</div><div id="user-display" style="font-size:13px; color:#666;"></div></div>
+            <div class="timer" id="time-display">120:00</div>
+        </div>
+       <!-- ==================== الجزء 1: بوابة الامتحان (120 سؤال + تسليم المشروعين) ==================== -->
+<div style="direction:rtl;max-width:900px;margin:20px auto;padding:25px;background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.08);border-top:6px solid #0f172a;font-family:'Segoe UI',Tahoma,sans-serif">
+ <!-- لوجو سيسكو المطور الصغير المدمج -->
+    <div class="cisco">
+        <div class="cisco-bars-flex">
+            <span class="line one"></span>
+            <span class="line two"></span>
+            <span class="line three"></span>
+            <span class="line two"></span>
+            <span class="line one"></span>
+            <span class="line two"></span>
+            <span class="line three"></span>
+            <span class="line two"></span>
+            <span class="line one"></span>
+        </div>
+        <p class="cisco-text">cisco</p>
+    </div>
+  <div style="text-align:center;border-bottom:2px solid #e2e8f0;padding-bottom:15px;margin-bottom:20px">
+    <h1 style="color:#0f172a;margin:0 0 8px;font-size:24px">🎓 اختبار ومشروع سيسكو النهائي (CCNA 200-301 / CCNP ENCOR 350-401)</h1>
+	
+    <p style="color:#64748b;font-size:14px;margin:0">40 درجة نظري (120 سؤال بترتيب أقسام امتحان CCNA) + 60 درجة مشروع (30 Packet Tracer + 30 GNS3)</p>
+    <span style="display:inline-block;background:#ef4444;color:#fff;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:bold;margin-top:8px">شرط النجاح 70% + رفع ملف مشروع Packet Tracer وملف مشروع GNS3</span>
+  </div>
+  <form id="quiz-form">
+    <h3 style="color:#1e293b;border-bottom:2px solid #cbd5e1;padding-bottom:8px">📝 أولاً: الأسئلة النظرية (120 سؤال - 40 درجة)</h3>
+    <div id="dynamic-questions-container"></div>
+  </form>
+  <div style="background:#f8fafc;padding:18px;border-radius:10px;border:1px solid #e2e8f0;margin:20px 0">
+    <h3 style="color:#1e293b;margin-top:0">💻 ثانياً: تسليم ملفات المشروع (60 درجة)</h3>
+    <div style="margin-bottom:15px;padding:14px;background:#fff;border-radius:8px;border:1px dashed #0284c7">
+      <label style="display:block;font-weight:bold;color:#0284c7;margin-bottom:5px">1) ملف مشروع Packet Tracer ‏(.pkt / .pka) — 30 درجة</label>
+      <p style="font-size:12px;color:#64748b;margin:0 0 8px">يُفك تشفير الملف ويُفحص: VLANs، HSRPv2، LACP، RSTP/PortFast، Router-on-a-Stick، DHCP، NAT، WLC/SSID، وإعدادات الأمان.</p>
+      <input type="file" id="ptFile" accept=".pkt,.pka" onchange="document.getElementById('pt-status').innerText='📎 '+this.files[0].name" style="width:100%">
+      <div id="pt-status" style="font-size:12px;color:#16a34a;margin-top:5px;font-weight:600"></div>
+    </div>
+    <div style="padding:14px;background:#fff;border-radius:8px;border:1px dashed #475569">
+      <label style="display:block;font-weight:bold;color:#475569;margin-bottom:5px">2) ملف مشروع GNS3 ‏(.gns3project / .gns3) — 30 درجة</label>
+      <p style="font-size:12px;color:#64748b;margin:0 0 8px">يُفتح المشروع (File → Export portable project) ويُقرأ منه الـ Topology وإعدادات الراوترات: OSPF، EIGRP، eBGP، NAT، Loopbacks، Authentication.</p>
+      <input type="file" id="gns3File" accept=".gns3project,.gns3,.zip" onchange="document.getElementById('gns3-status').innerText='📎 '+this.files[0].name" style="width:100%">
+      <div id="gns3-status" style="font-size:12px;color:#16a34a;margin-top:5px;font-weight:600"></div>
+    </div>
+  </div>
+  <button type="button" class="btn" onclick="finishExam(true)">إنهاء الاختبار وتصحيح الأسئلة والمشروعين 🎯</button>
+</div>
+</div>
+<script>
+let HEADS = {};
+const CATS = [
+ {d:"1.0 Network Fundamentals", q:"At which OSI layer does {x} operate?", ar:"في أي طبقة من نموذج OSI يعمل {x}؟", i:[["a hub","Layer 1 – Physical"],["an Ethernet switch (MAC forwarding)","Layer 2 – Data Link"],["a router (IP forwarding)","Layer 3 – Network"],["TCP","Layer 4 – Transport"],["HTTP","Layer 7 – Application"],["UDP","Layer 4 – Transport"],["a MAC address","Layer 2 – Data Link"],["an IP address","Layer 3 – Network"],["a Cat6 cable","Layer 1 – Physical"],["DNS","Layer 7 – Application"]]},
+ {d:"1.0 Network Fundamentals", q:"How many usable host addresses exist in a {x} IPv4 subnet?", ar:"كم عدد عناوين الهوست الصالحة في شبكة IPv4 بقناع {x}؟", i:[["/24","254"],["/25","126"],["/26","62"],["/27","30"],["/28","14"],["/29","6"],["/30","2"],["/23","510"],["/22","1022"],["/21","2046"]]},
+ {d:"1.0 Network Fundamentals", q:"What is the dotted-decimal subnet mask of {x}?", ar:"ما هو القناع (Subnet Mask) المقابل لـ {x}؟", i:[["/19","255.255.224.0"],["/20","255.255.240.0"],["/22","255.255.252.0"],["/23","255.255.254.0"],["/25","255.255.255.128"],["/26","255.255.255.192"],["/27","255.255.255.224"],["/28","255.255.255.240"],["/29","255.255.255.248"],["/30","255.255.255.252"]]},
+ {d:"1.0 Network Fundamentals", q:"Which IPv6 prefix/address is used for {x}?", ar:"أي عنوان/بادئة IPv6 تُستخدم لـ {x}؟", i:[["link-local addresses","FE80::/10"],["unique local addresses","FC00::/7"],["global unicast addresses","2000::/3"],["multicast addresses","FF00::/8"],["the loopback address","::1/128"],["the unspecified address","::/128"],["the IPv6 default route","::/0"],["the all-nodes multicast group","FF02::1"],["the all-routers multicast group","FF02::2"],["documentation examples","2001:DB8::/32"]]},
+ {d:"2.0 Network Access", q:"Which command {x}?", ar:"ما الأمر الذي ينفذ المهمة التالية: {x}؟", i:[["adds an interface to an LACP EtherChannel","channel-group 1 mode active"],["enables Rapid PVST+","spanning-tree mode rapid-pvst"],["enables PortFast on an access port","spanning-tree portfast"],["sets the native VLAN to 14 on a trunk","switchport trunk native vlan 14"],["forces a port to trunk","switchport mode trunk"],["assigns voice VLAN 12 to a phone port","switchport voice vlan 12"],["enables LLDP globally","lldp run"],["makes the switch root bridge for VLAN 10","spanning-tree vlan 10 root primary"],["shuts an edge port that receives BPDUs","spanning-tree bpduguard enable"],["prevents a port from becoming a root port","spanning-tree guard root"]]},
+ {d:"2.0 Network Access", q:"What is the value of {x}?", ar:"ما قيمة {x}؟", i:[["the default STP bridge priority","32768"],["the STP priority increment step","4096"],["the default HSRP priority","100"],["the default HSRP hello timer (seconds)","3"],["the default CDP timer (seconds)","60"],["the default MAC aging time (seconds)","300"],["the maximum active links in an LACP bundle","8"],["the default native VLAN ID","1"],["the standard Ethernet MTU (bytes)","1500"],["the highest extended-range VLAN ID","4094"]]},
+ {d:"2.0 Network Access", q:"Wireless: {x}", ar:"الشبكات اللاسلكية: {x}", i:[["Which non-overlapping 2.4 GHz channels are used in the US?","1, 6, 11"],["Which UDP port carries CAPWAP control traffic?","5246"],["Which UDP port carries CAPWAP data traffic?","5247"],["Which cipher does WPA2 use?","AES-CCMP"],["Which key exchange does WPA3-Personal use?","SAE"],["Which IEEE standard is Wi-Fi 6?","802.11ax"],["Which standard operates only in the 5 GHz band?","802.11ac"],["Which AP mode keeps forwarding locally if the WAN to the WLC fails?","FlexConnect"],["Which architecture splits real-time and management functions between AP and WLC?","Split-MAC"],["Which protocol tunnels traffic between a lightweight AP and the WLC?","CAPWAP"]]},
+ {d:"3.0 IP Connectivity", q:"What is the default administrative distance of {x}?", ar:"ما المسافة الإدارية (AD) الافتراضية لـ {x}؟", i:[["a connected interface","0"],["a static route","1"],["eBGP","20"],["internal EIGRP","90"],["OSPF","110"],["IS-IS","115"],["RIP","120"],["external EIGRP","170"],["iBGP","200"],["an unreachable route","255"]]},
+ {d:"3.0 IP Connectivity", q:"What is {x}?", ar:"ما هو/هي {x}؟", i:[["the multicast address used by OSPF hellos","224.0.0.5"],["the multicast address for OSPF DR/BDR","224.0.0.6"],["the multicast address used by EIGRP","224.0.0.10"],["the multicast address used by RIPv2","224.0.0.9"],["the multicast address used by HSRPv2","224.0.0.102"],["the TCP port used by BGP","179"],["the IP protocol number of OSPF","89"],["the IP protocol number of EIGRP","88"],["the default OSPF interface priority","1"],["the default OSPF hello interval on broadcast links (seconds)","10"]]},
+ {d:"4.0 IP Services", q:"Which default port number does {x} use?", ar:"ما رقم المنفذ الافتراضي لـ {x}؟", i:[["SSH","22"],["Telnet","23"],["SMTP","25"],["DNS","53"],["TFTP (UDP)","69"],["HTTP","80"],["NTP (UDP)","123"],["SNMP agent (UDP)","161"],["HTTPS","443"],["Syslog (UDP)","514"]]},
+ {d:"5.0 Security Fundamentals", q:"Which command {x}?", ar:"ما الأمر الذي ينفذ المهمة التالية: {x}؟", i:[["encrypts all plain-text passwords in the config","service password-encryption"],["enables port security on an access port","switchport port-security"],["enables DHCP snooping globally","ip dhcp snooping"],["marks an uplink as trusted for DHCP snooping","ip dhcp snooping trust"],["generates the keys required for SSH","crypto key generate rsa"],["allows only SSH on the VTY lines","transport input ssh"],["stores the privileged password as a hash","enable secret"],["applies an ACL to inbound traffic on an interface","ip access-group NAME in"],["maps a public IP statically to an inside server","ip nat inside source static"],["authenticates OSPF with MD5 on an interface","ip ospf message-digest-key"]]},
+ {d:"6.0 Automation and Programmability", q:"{x}", ar:"الأتمتة والبرمجة: {x}", i:[["HTTP POST is mainly used to…","Create a resource"],["HTTP GET is used to…","Retrieve a resource"],["HTTP PUT is used to…","Replace/update a resource"],["HTTP DELETE is used to…","Remove a resource"],["JSON data is built from…","Key/value pairs"],["YANG is…","A data modeling language"],["NETCONF runs over…","SSH (TCP 830)"],["Which Cisco controller is the campus SDN solution?","Cisco DNA Center"],["How does Ansible reach devices?","Agentless over SSH"],["The API between the controller and applications is the…","Northbound API"]]}
+];
+function rng(s){return()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function shuf(a,r){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+const generatedQuestions=[];
+CATS.forEach(c=>{const pool=[...new Set(c.i.map(x=>x[1]))];c.i.forEach(([x,a])=>{const r=rng(generatedQuestions.length*7919+13);const o=shuf([a,...shuf(pool.filter(p=>p!==a),r).slice(0,3)],r);generatedQuestions.push({d:c.d,q:c.q.replace('{x}',x),ar:c.ar.replace('{x}',x),o,ans:'ABCD'[o.indexOf(a)]})})});
+function generateQuestionsNow(){
+ let html="",last="";
+ generatedQuestions.forEach((it,n)=>{
+  if(it.d!==last){last=it.d;html+=`<h4 style="direction:ltr;text-align:left;background:#0d233a;color:#fff;padding:8px 12px;border-radius:6px">${it.d}</h4>`}
+  html+=`<div class="question-box"><div>${n+1}. ${it.q}<div class="arabic-text">${it.ar}</div></div><ul class="options-list">`+
+   it.o.map((t,k)=>`<li class="option-item"><label><input type="radio" name="rad_q${n+1}" value="${'ABCD'[k]}"> ${'ABCD'[k]}) ${t}</label></li>`).join("")+`</ul></div>`});
+ document.getElementById("dynamic-questions-container").innerHTML=html}
+generateQuestionsNow();
+
+/* ---------- قراءة ملفات المشاريع الحقيقية ---------- */
+async function inflate(bytes){const s=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate'));return await new Response(s).text()}
+const TFq=(()=>{const T=[[[8,1,7,13,6,15,3,2,0,11,5,9,14,12,10,4],[14,12,11,8,1,2,3,5,15,4,10,6,7,0,9,13],[11,10,5,14,6,13,9,0,12,8,15,3,2,4,7,1],[13,7,15,4,1,2,6,14,9,11,3,0,8,5,12,10]],[[2,8,11,13,15,7,6,14,3,1,9,4,0,10,12,5],[1,14,2,11,4,12,3,7,6,13,10,5,15,9,0,8],[4,12,7,5,1,6,9,10,0,14,13,8,2,11,3,15],[11,9,5,1,12,3,13,14,6,4,7,15,2,0,8,10]]];const r4=x=>((x>>1)|((x&1)<<3))&15;return [0,1].map(k=>{const t=T[k],q=[];for(let x=0;x<256;x++){const a=x>>4,b=x&15,a1=a^b,b1=(a^r4(b)^((8*a)&15))&15,a2=t[0][a1],b2=t[1][b1],a3=a2^b2,b3=(a2^r4(b2)^((8*a2)&15))&15;q.push(16*t[3][b3]+t[2][a3])}return q})})();
+const gm=(a,b,p)=>{let r=0;while(b){if(b&1)r^=a;a<<=1;if(a&256)a^=p;b>>=1}return r};
+const MDS=[[1,0xEF,0x5B,0x5B],[0x5B,0xEF,0xEF,1],[0xEF,0x5B,1,0xEF],[0xEF,1,0xEF,0x5B]],RSM=[[1,0xA4,0x55,0x87,0x5A,0x58,0xDB,0x9E],[0xA4,0x56,0x82,0xF3,0x1E,0xC6,0x68,0xE5],[2,0xA1,0xFC,0xC1,0x47,0xAE,0x3D,0x19],[0xA4,0x55,0x87,0x5A,0x58,0xDB,0x9E,3]];
+function Twofish(key){
+ const [Q0,Q1]=TFq,rol=(x,n)=>((x<<n)|(x>>>(32-n)))>>>0,ror=(x,n)=>((x>>>n)|(x<<(32-n)))>>>0,by=x=>[x&255,(x>>>8)&255,(x>>>16)&255,x>>>24];
+ const chain=(i,x,L)=>i==0?Q1[Q0[Q0[x]^L[1][0]]^L[0][0]]:i==1?Q0[Q0[Q1[x]^L[1][1]]^L[0][1]]:i==2?Q1[Q1[Q0[x]^L[1][2]]^L[0][2]]:Q0[Q1[Q1[x]^L[1][3]]^L[0][3]];
+ const col=(i,y)=>{let w=0;for(let j=0;j<4;j++)w|=gm(MDS[j][i],y,0x169)<<(8*j);return w>>>0};
+ const H=(X,L)=>{const y=by(X);let w=0;for(let i=0;i<4;i++)w^=col(i,chain(i,y[i],L));return w>>>0};
+ const m=[0,1,2,3].map(i=>(key[4*i]|key[4*i+1]<<8|key[4*i+2]<<16|key[4*i+3]<<24)>>>0);
+ const Me=[by(m[0]),by(m[2])],Mo=[by(m[1]),by(m[3])];
+ const S=[0,1].map(i=>[0,1,2,3].map(j=>{let r=0;for(let t=0;t<8;t++)r^=gm(RSM[j][t],key[8*i+t],0x14D);return r})).reverse();
+ const K=[];for(let i=0;i<20;i++){const A=H(2*i*0x01010101>>>0,Me),B=rol(H((2*i+1)*0x01010101>>>0,Mo),8);K.push((A+B)>>>0,rol((A+2*B)>>>0,9))}
+ const TB=[0,1,2,3].map(i=>{const t=new Uint32Array(256);for(let x=0;x<256;x++)t[x]=col(i,chain(i,x,S));return t});
+ const g=x=>(TB[0][x&255]^TB[1][(x>>>8)&255]^TB[2][(x>>>16)&255]^TB[3][x>>>24])>>>0;
+ return function enc(b,o){const r=[0,1,2,3].map(i=>((b[o+4*i]|b[o+4*i+1]<<8|b[o+4*i+2]<<16|b[o+4*i+3]<<24)^K[i])>>>0);let a0=r[0],a1=r[1],a2=r[2],a3=r[3];
+  for(let rd=0;rd<16;rd++){const t0=g(a0),t1=g(rol(a1,8));const f0=(t0+t1+K[2*rd+8])>>>0,f1=(t0+2*t1+K[2*rd+9])>>>0;a2=ror((a2^f0)>>>0,1);a3=(rol(a3,1)^f1)>>>0;if(rd<15){[a0,a1,a2,a3]=[a2,a3,a0,a1]}}
+  const out=new Uint8Array(16),w=[a0^K[4],a1^K[5],a2^K[6],a3^K[7]];for(let i=0;i<4;i++){const v=w[i]>>>0;out[4*i]=v&255;out[4*i+1]=(v>>>8)&255;out[4*i+2]=(v>>>16)&255;out[4*i+3]=v>>>24}return out}}
+function ptDecrypt(u){ // PT 7+/9: reverse-xor -> Twofish-EAX(CTR) -> xor -> zlib
+ const L=u.length,d=new Uint8Array(L);for(let i=0;i<L;i++)d[i]=u[L-1-i]^((L-i*L)&255);
+ const enc=Twofish(new Uint8Array(16).fill(137)),iv=new Uint8Array(16).fill(16),z=new Uint8Array(16);
+ const Lk=enc(z,0);
+ const dbl=b=>{const o=new Uint8Array(16);for(let i=0;i<16;i++)o[i]=((b[i]<<1)|(i<15?b[i+1]>>7:0))&255;if(b[0]>>7)o[15]^=0x87;return o};
+ const k1=dbl(Lk),t=new Uint8Array(16);for(let i=0;i<16;i++)t[i]=Lk[i]^iv[i]^k1[i];
+ const ctr=enc(t,0),n=L-16,p=new Uint8Array(n),cb=new Uint8Array(ctr);
+ for(let i=0;i<n;i+=16){const ks=enc(cb,0);for(let j=0;j<16&&i+j<n;j++)p[i+j]=d[i+j]^ks[j];for(let k=15;k>=0;k--){if(++cb[k]&255){cb[k]&=255;break}cb[k]=0}}
+ for(let i=0;i<n;i++)p[i]^=(n-i)&255;return p}
+async function readPT(file){
+ const u=new Uint8Array(await file.arrayBuffer());let x=null;
+ try{x=await inflate(ptDecrypt(u).subarray(4))}catch(e){x=null}
+ if(!x||!/<packettracer/i.test(x)){const L=u.length;try{const o=new Uint8Array(L);for(let i=0;i<L;i++)o[i]=u[L-1-i]^((L-i*L)&255);x=await inflate(o.subarray(4))}catch(e){x=null}}
+ return x&&/<packettracer/i.test(x)?x:null}
+async function readGNS3(file){
+ const buf=await file.arrayBuffer(),u=new Uint8Array(buf);let topo=null;const cfgs=[];
+ const add=t=>{if(t&&/hostname|interface |router /i.test(t))cfgs.push(t.toLowerCase())};
+ if(u[0]===0x50&&u[1]===0x4B){
+  const z=await JSZip.loadAsync(buf);
+  for(const [n,e] of Object.entries(z.files)){if(e.dir)continue;
+   if(/\.gns3$/i.test(n)){try{topo=JSON.parse(await e.async('string'))}catch(x){}}
+   else if(/\.(cfg|conf|txt)$|startup-config|running-config/i.test(n)&&!/\.(qcow2|img|bin|image|iso)$/i.test(n))add(await e.async('string'))}
+ }else{try{topo=JSON.parse(new TextDecoder().decode(buf))}catch(e){}}
+ const nodes=(topo&&topo.topology&&topo.topology.nodes)||[],links=(topo&&topo.topology&&topo.topology.links)||[];
+ nodes.forEach(n=>{const p=n.properties||{};add(p.startup_config_content);add(p.private_config_content)});
+ const routers=nodes.filter(n=>!/switch|cloud|nat|vpcs|hub|frame_relay|atm|docker|ethernet/i.test(n.node_type||"")).length;
+ return {cfgs,routers,links:links.length,nodes:nodes.length}}
+
+/* ---------- معايير التصحيح (من ملف المشروع PDF + الرسمة) ---------- */
+const frac=(n,need)=>Math.min(n,need)/need;
+const PT_RUBRIC=[
+ [3,"VLANs 10–14 موجودة",t=>frac(new Set(t.match(/vlan 1[0-4]\b/g)||[]).size,5)],
+ [3,"HSRP v2 على VLAN 14 (Core 1 / Core 2)",t=>(/standby version 2/.test(t)?.5:0)+(/standby \d+ ip/.test(t)?.5:0)],
+ [2,"LACP Port-Channels (Group 1–4)",t=>frac((t.match(/channel-group \d+ mode (active|passive)/g)||[]).length,4)],
+ [2,"Rapid-PVST + PortFast",t=>(/rapid-pvst/.test(t)?.5:0)+(/portfast/.test(t)?.5:0)],
+ [2,"Root Bridge لكل VLAN (Load Sharing)",t=>/spanning-tree vlan [\d,\- ]+ (root|priority)/.test(t)?1:0],
+ [1,"Native VLAN 14 على الـ Trunks",t=>/native vlan 14/.test(t)?1:0],
+ [2,"Router-on-a-Stick + SVI للـ Inter-VLAN",t=>(/encapsulation dot1q/.test(t)?.5:0)+(/interface vlan ?1[0-4]/.test(t)?.5:0)],
+ [2,"DHCP Pools",t=>frac((t.match(/ip dhcp pool/g)||[]).length,2)],
+ [1,"Voice VLAN 12 للتليفون",t=>/voice vlan 12/.test(t)?1:0],
+ [1,"LLDP + CDP",t=>(/lldp run/.test(t)?.5:0)+(!/no cdp run/.test(t)?.5:0)],
+ [1,"Default Gateway / Default Route على السويتشات",t=>/ip default-gateway|ip route 0\.0\.0\.0 0\.0\.0\.0/.test(t)?1:0],
+ [2,"NAT: Static 41.17.125.33 + Overload",t=>(/ip nat inside source static [\d.]+ 41\.17\.125\.33/.test(t)?.5:0)+(/ip nat inside source list .*overload/.test(t)?.5:0)],
+ [2,"BPDU Guard + Root Guard",t=>(/bpduguard/.test(t)?.5:0)+(/guard root/.test(t)?.5:0)],
+ [1,"Port Security",t=>/port-security/.test(t)?1:0],
+ [1,"SSH على VTY/Console",t=>/transport input ssh|ip ssh version/.test(t)?1:0],
+ [1,"ACL (VLAN 12 / Mobile WiFi / WLC 443)",t=>/access-list|ip access-group/.test(t)?1:0],
+ [1,"DHCP Snooping",t=>/ip dhcp snooping/.test(t)?1:0],
+ [1,"تشفير كلمات المرور (MD5 type 5 + type 7)",t=>(/service password-encryption/.test(t)?.5:0)+(/secret/.test(t)?.5:0)],
+ [1,"SSID باسم Engovation",t=>/engovation/.test(t)?1:0]];
+const IPS=["172.16.2.2","172.16.2.1","10.1.1.1","10.1.1.2","10.2.1.2","10.2.1.1","20.1.2.1","20.1.2.2","16.1.1.2","16.1.1.1","1.1.1.1","2.2.2.1","3.3.3.1","4.4.4.1","4.4.4.2","10.11.1.1","10.12.1.1","10.13.1.1"];
+const cnt=(g,re)=>g.cfgs.filter(c=>re.test(c)).length;
+const G_RUBRIC=[
+ [1,"Topology: 10 راوتر على الأقل",g=>g.routers>=10?1:0],
+ [1,"Topology: 12 وصلة (Link) على الأقل",g=>g.links>=12?1:0],
+ [3,"OSPF بين فرع القاهرة A والفروع B,C,D",g=>frac(cnt(g,/router ospf/),4)],
+ [3,"EIGRP بين راوترات TE-DATA (R1,R2,R5)",g=>frac(cnt(g,/router eigrp/),3)],
+ [4,"E-BGP بين TE-DATA و Orange (7 راوترات / ASNs مختلفة)",g=>{const as=new Set();g.cfgs.forEach(c=>(c.match(/router bgp (\d+)/g)||[]).forEach(m=>as.add(m)));return (as.size>=2?.5:0)+.5*frac(cnt(g,/router bgp/),7)}],
+ [2,"OSPF داخل راوترات Orange (R3,R4,R7,R8)",g=>frac(Math.max(0,cnt(g,/router ospf/)-4),4)],
+ [2,"Loopback على الراوترات",g=>frac(cnt(g,/interface loopback/),10)],
+ [4,"عناوين الرسمة (IPs الخاصة بالـ ISP والفروع)",g=>{const all=g.cfgs.join("\n");return IPS.filter(i=>all.includes(i)).length/IPS.length}],
+ [2,"NAT Static للـ Web Server (41.17.125.33)",g=>g.cfgs.some(c=>/ip nat inside source static [\d.]+ 41\.17\.125\.33/.test(c))?1:0],
+ [2,"NAT Static للـ Backup Web Server (62.117.50.21) على Router D",g=>g.cfgs.some(c=>/ip nat inside source static [\d.]+ 62\.117\.50\.21/.test(c))?1:0],
+ [2,"Default Route نحو ADSL ‏(192.168.1.1)",g=>g.cfgs.some(c=>/ip route 0\.0\.0\.0 0\.0\.0\.0 192\.168\.1\.1/.test(c))?1:0],
+ [3,"Authentication في بروتوكولات التوجيه",g=>g.cfgs.some(c=>/message-digest|authentication|key chain|neighbor [\d.]+ password/.test(c))?1:0],
+ [1,"Backup DHCP من فرع طنطا",g=>g.cfgs.some(c=>/ip dhcp pool|ip helper-address/.test(c))?1:0]];
+function grade(rub,input,title,logs){let s=0;
+ rub.forEach(([p,l,f])=>{const got=Math.round(p*f(input)*10)/10;s+=got;logs.push(`<li style="margin-bottom:4px;color:${got>=p?'#16a34a':got>0?'#d97706':'#dc2626'}">${got>=p?'✅':got>0?'🟡':'❌'} [${title}] ${l} — ${got}/${p}</li>`)});
+ return Math.round(s)}
+
+async function finishExam(manual){
+ const pf=document.getElementById('ptFile').files[0],gf=document.getElementById('gns3File').files[0];
+ if(manual&&(!pf||!gf)){alert("⚠️ لازم ترفع ملف مشروع Packet Tracer وملف مشروع GNS3 الأول.");return}
+ clearInterval(countdownInterval);
+ let ok=0;generatedQuestions.forEach((it,n)=>{const v=document.querySelector(`input[name="rad_q${n+1}"]:checked`);if(v&&v.value===it.ans)ok++});
+ const theory=Math.round(ok/120*40),logs=[`<li style="margin-bottom:8px"><b>📝 النظري:</b> ${ok}/120 إجابة صحيحة = ${theory}/40</li>`];
+ let pt=0,g3=0,readable=true;
+ if(pf){const x=await readPT(pf);if(x)pt=grade(PT_RUBRIC,x.toLowerCase(),"PT",logs);else{readable=false;logs.push(`<li style="color:#dc2626">❌ تعذّر فك تشفير ملف Packet Tracer (صيغة غير مدعومة أو ملف تالف) — 0/30</li>`)}}
+ if(gf){try{const r=await readGNS3(gf);if(!r.cfgs.length&&!r.nodes)throw 0;if(!r.cfgs.length)logs.push(`<li style="color:#d97706">🟡 لا توجد إعدادات مخزنة داخل المشروع (نفّذ write memory ثم صدّر المشروع).</li>`);g3=grade(G_RUBRIC,r,"GNS3",logs)}catch(e){readable=false;logs.push(`<li style="color:#dc2626">❌ تعذّر قراءة ملف GNS3 (يجب أن يكون .gns3project أو .gns3) — 0/30</li>`)}}
+ const total=Math.min(100,theory+pt+g3),pass=total>=70&&pf&&gf&&readable;
+ switchScreen('results-screen');
+ document.getElementById('txtTheoryScore').innerText=theory+" / 40";
+ document.getElementById('txtPTScore').innerText=pt+" / 30";
+ document.getElementById('txtGNS3Score').innerText=g3+" / 30";
+ document.getElementById('score-text').textContent=total+"%";
+ document.getElementById('portalDetailsList').innerHTML=logs.join("");
+ document.getElementById('finalPortalResult').style.display="block";
+ const pf2=document.getElementById('pass-fail-text'),cw=document.getElementById('cert-wrapper');
+ if(pass){pf2.textContent="Congratulations! You Passed.";pf2.style.color="green";
+  const d=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  document.getElementById('cert-student-name').textContent=currentUser;document.getElementById('cert-date').textContent=d;document.getElementById('dynamic-stamp-date').textContent=d;cw.style.display='block'}
+ else{pf2.textContent=(pf&&gf)?"Failed to achieve 70%.":"Projects not submitted — no certificate.";pf2.style.color="red";cw.style.display='none'}}
+</script>
+
+<!-- ==================== نهاية جزء مصحح المشروع الآلي الجديد ==================== -->
+
+    <!-- شاشة عرض النتيجة وتوليد الشهادة الرسمية والـ QR المدمج -->
+    <div id="results-screen" class="screen" style="text-align: center;">
+	 <!-- لوجو سيسكو المطور الصغير المدمج -->
+    <div class="cisco">
+        <div class="cisco-bars-flex">
+            <span class="line one"></span>
+            <span class="line two"></span>
+            <span class="line three"></span>
+            <span class="line two"></span>
+            <span class="line one"></span>
+            <span class="line two"></span>
+            <span class="line three"></span>
+            <span class="line two"></span>
+            <span class="line one"></span>
+        </div>
+        <p class="cisco-text">cisco</p>
+    </div>
+        <h2>Exam Results / نتائج الاختبار</h2>
+        <div style="font-size: 32px; font-weight: bold; margin: 15px 0;" id="score-text">0%</div>
+        <p id="pass-fail-text" style="font-weight: bold; font-size: 18px;"></p><div id="finalPortalResult" style="display:none;margin:20px 0;padding:20px;border-radius:12px;background:#f1f5f9;border:2px solid #cbd5e1;direction:rtl;text-align:right">
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;text-align:center;margin-bottom:15px">
+<div style="background:#fff;padding:12px;border-radius:8px"><span style="font-size:12px;color:#64748b;display:block">النظري</span><b id="txtTheoryScore">0 / 40</b></div>
+<div style="background:#fff;padding:12px;border-radius:8px"><span style="font-size:12px;color:#64748b;display:block">Packet Tracer</span><b id="txtPTScore">0 / 30</b></div>
+<div style="background:#fff;padding:12px;border-radius:8px"><span style="font-size:12px;color:#64748b;display:block">GNS3</span><b id="txtGNS3Score">0 / 30</b></div></div>
+<ul id="portalDetailsList" style="list-style:none;padding:12px;margin:0;font-size:13px;background:#fff;border-radius:8px"></ul></div>
+        
+       <div id="cert-wrapper" style="display:none; margin-top: 20px;">
+    <div id="certificate-area">
+        <div class="geometry-container">
+		<!-- خطوط العلامة المائية الخلفية -->
+  <div class="lines-watermark-svg"></div>
+            <div class="geo-shape-green"></div>
+			<!-- خطوط العلامة المائية الخلفية -->
+  <div class="lines-watermark-svg"></div>
+        </div>
+ <div class="cert-header-layout">
+<div class="cert-header-layout">
+    <!-- لوجو سيسكو المطور الصغير المدمج -->
+    <div class="cisco">
+        <div class="cisco-bars-flex">
+            <span class="line one"></span>
+            <span class="line two"></span>
+            <span class="line three"></span>
+            <span class="line two"></span>
+            <span class="line one"></span>
+            <span class="line two"></span>
+            <span class="line three"></span>
+            <span class="line two"></span>
+            <span class="line one"></span>
+        </div>
+        <p class="cisco-text">cisco</p>
+    </div>
+    
+    <div class="brand-divider"></div>
+    <div class="brand-sub-title"><span>Networking</span><span>Academy</span></div>
+	<!-- استدعاء خطوط Google Fonts بالحجم والوزن المطلوب -->
+<link href="https://googleapis.com" rel="stylesheet">
+
+<div class="engovation-logo-mini">
+    <!-- رسمة الـ SVG مع تقليص حجم الظل ليناسب الأبعاد الصغيرة -->
+    <svg class="engovation-svg-mini" xmlns="http://w3.org" viewBox="0 0 400 320">
+        <defs>
+            <!-- تقليص نسبة الظل لكي لا يطمس تفاصيل اللوجو الصغيرة -->
+            <filter id="logo-shadow-mini" x="-10%" y="-10%" width="120%" height="120%">
+                <feDropShadow dx="0" dy="8" stdDeviation="5" flood-color="#000000" flood-opacity="0.5"/>
+            </filter>
+        </defs>
+
+        <g filter="url(#logo-shadow-mini)">
+            <!-- الدائرة الأساسية -->
+            <path d="M 200,45 A 82,85 0 1,0 280,145" fill="none" stroke="#ffffff" stroke-width="26" stroke-linecap="square"/>
+            <!-- الحروف الداخلية EV -->
+            <path d="M 125,100 L 193,100 M 125,133 L 180,133 M 125,166 L 205,166" fill="none" stroke="#ffffff" stroke-width="20" stroke-linecap="square"/>
+            <path d="M 215,95 L 245,170 L 275,95" fill="none" stroke="#ffffff" stroke-width="20" stroke-linecap="square" stroke-linejoin="miter"/>
+            <!-- الخوذة الصفراء وتفاصيلها -->
+            <path d="M 165,70 C 175,22, 260,0, 305,58 L 312,85 C 290,110, 240,95, 230,90 L 165,70 Z" fill="#f5b316"/>
+            <path d="M 195,50 C 205,30, 245,15, 265,38 L 225,58 Z" fill="#eab308"/>
+            <path d="M 240,32 C 250,15, 280,10, 295,28 L 265,42 Z" fill="#eab308"/>
+            <path d="M 152,78 L 175,70 L 235,90 L 320,105 L 305,115 Z" fill="#fabf24"/>
+        </g>
+    </svg>
+
+    <!-- النصوص بحجم مصغر ومدروس -->
+    <div class="logo-text-mini">
+        <h1 class="brand-name-mini"><span class="yellow-part">ENGO</span><span class="white-part">VATION</span></h1>
+        <p class="brand-slogan-mini">WE BUILD THE FUTURE</p>
+    </div>
+</div>
+
+</div>
+
+        </div>
+        <div class="cert-main-head">This certificate is awarded to</div>
+        <div class="student-name-highlight" id="cert-student-name">Student Name</div>
+        <div class="completion-statement">has successfully completed the training course requirements and academic simulation modules for attending: <font>Cisco Certified Network Associate (CCNA 200-301)</font> course simulation modules.</div>
+        
+        <div class="objectives-container">
+            <div class="objectives-column">
+                <p>Explain the importance of methodological ethical hacking and penetration testing.</p>
+                <p>Create penetration testing preliminary documents and strategic infrastructure layouts.</p>
+            </div>
+            <div class="objectives-column">
+                <p>Explain how to exploit application-based vulnerabilities and wireless networks.</p>
+                <p>Create a penetration testing report and classify security posture frameworks.</p>
+            </div>
+        </div>
+      
+
+        <div class="cert-footer-layout">
+            <div class="left-footer-badges">
+                <div class="verified-badge-cisco">
+                    <div class="v-badge-top">CISCO SYSTEMS</div><div class="v-badge-mid">Verified</div><div class="v-badge-bottom">Course Track</div>
+                </div>
+                <div class="qr-code-">
+                    <div class="qr-mock-"></div>
+                    <div></div>
+					Cisco Networking Academy®
+                </div>
+            </div>
+			  <!-- استدعاء خط Inter للمظهر الرسمي للختم -->
+
+
+<div class="cisco-accepted-stamp">
+    <div class="stamp-inner">
+        <span class="stamp-top-text">Cisco Networking Academy®</span>
+        <h2 class="stamp-main-text">ACCEPTED</h2>
+        <span class="stamp-date" id="dynamic-stamp-date"> January 12, 2025</span>
+    </div>
+</div>
+            <div class="right-footer-sig">
+<div class="handwritten-signature-wrapper">
+    <!-- اسم الموقّع بالخط اليدوي -->
+    <span class="signer-name">Dr/Adel Marzouk</span>
+    
+    <!-- تاريخ اجتياز الاختبار المستدعى كأنه مكتوب بخط اليد -->
+    
+</div>                <div class="sig-underline-node">D.r/Adel Marzouk<div class="sig-title-sub">Instructor<br>Cisco Networking Academy</div></div>
+                <div class="issuance-date-node" id="cert-date">January 12, 2025</div>
+            </div>
+        </div>
+    </div>
+    <button class="btn btn-pdf" onclick="downloadPDF()">Download High-Resolution Certificate (PDF)</button>
+    <button class="btn" style="margin-top:25px; background:#666;" onclick="window.location.reload()">Back / خروج</button>
+</div>
+
+<script>
+    let currentUser = null; let totalSeconds = 120 * 60; let countdownInterval;
+    function switchScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+    function handleRegister() {
+        const name = document.getElementById('reg-name').value.trim();
+        const email = document.getElementById('reg-email').value.trim().toLowerCase();
+        const pass = document.getElementById('reg-pass').value;
+        if(!name || !email || !pass) { alert("Please fill all fields"); return; }
+        localStorage.setItem(email, JSON.stringify({ name: name, pass: pass }));
+        alert("Registration Successful!"); switchScreen('login-screen');
+    }
+    function handleLogin() {
+        const email = document.getElementById('login-email').value.trim().toLowerCase();
+        const pass = document.getElementById('login-pass').value;
+        const uData = localStorage.getItem(email);
+        if(!uData) { alert("User not found"); return; }
+        const user = JSON.parse(uData);
+        if(user.pass !== pass) { alert("Incorrect password"); return; }
+        currentUser = user.name; document.getElementById('user-display').textContent = "Student: " + currentUser;
+        switchScreen('exam-screen'); startTimer();
+    }
+    function startTimer() {
+        countdownInterval = setInterval(() => {
+            let m = Math.floor(totalSeconds / 60); let s = totalSeconds % 60;
+            document.getElementById('time-display').textContent = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+            if (totalSeconds <= 0) { clearInterval(countdownInterval); calculateScore(); }
+            totalSeconds--;
+        }, 1000);
+    }
+    function calculateScore() { finishExam(false); }
+    function downloadPDF() {
+        const element = document.getElementById('certificate-area');
+        html2pdf().set({
+            margin: 0, filename: 'Cisco_Landscape_Certificate.pdf', image: { type: 'jpeg', quality: 1.0 },
+            html2canvas: { scale: 1, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+        }).from(element).save();
+    }
+</script>
+
+
+
+</body>
+</html>
