@@ -345,45 +345,7 @@ position: relative;
 .sig-title-sub { font-size: 11px; color: #666; font-weight: normal; margin-top: 2px; }
 .issuance-date-node { font-size: 12px; color: #222; font-weight: bold; margin-top: 15px; }
 @media print {
-    /* 1. إجبار الطابعة على اختيار الاتجاه العرضي Landscape وإلغاء الحواف الهامشية المتصفحية */
-    @page {
-        size: A4 landscape !important;
-        margin: 0mm;
-		 
-    }
-    
-    /* 2. إخفاء أي عنصر خارج الشهادة (مثل أزرار الطباعة، خلفية الموقع، الإعلانات) */
-    body * {
-        visibility: hidden;
-    }
-    
-    /* 3. إظهار الشهادة ومحتوياتها الداخلية فقط */
-    #certificate-area, #certificate-area * {
-	
-        visibility: visible;
-    }
-    
-    /* 4. حفر موقع الشهادة في النقطة صفر للورقة وتمديدها لتملأ الورقة بالكامل */
-    #certificate-area {
-        position: absolute;
-        left: 30px;
-        top: 0;
-        width: 100vw;
-        height: 98.4vh;
-        box-shadow: none; /* إزالة الظلال لمنع الهدر الحبري */
-      /* تثبيت ظهور الإطار كعنصر مطبوع أساسي */
-        border: 12px double #007aa6 !important; 
-        outline: 2px solid #0f172a !important;
-        box-sizing: border-box;
-    
-		
-    }
-    
-    /* إخفاء زر الطباعة نهائياً في الورقة */
-    .no-print-btn {
-        display: none !important;
-    }
-}
+ 
 		@page {
     size: A4 landscape;
     margin: 0;
