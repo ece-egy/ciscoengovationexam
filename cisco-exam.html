@@ -326,9 +326,9 @@ position: relative;
 .brand-sub-title span { display: block; font-size: 16px; font-weight: ; color: #049fd9; }
 .cert-main-head { font-size: 32px; font-weight: bold; color: #062b53; margin-bottom: 30px; position: relative; z-index: 2; }
 .student-name-highlight { font-size: 28px; color: #049fd9; margin-bottom: 25px; position: relative; z-index: 2; }
-.completion-statement { font-size: 16px; color: #555; line-height: 1.5; margin-bottom: 30px; max-width: 620px; position: relative; z-index: 1; }
+.completion-statement { font-size: 16px; color: #555; line-height: 1.5; margin-bottom: 30px; max-width: 620px; position: relative; z-index: 2; }
 .completion-statement font { font-weight: bold; color: #222; }
-.objectives-container { display: flex; justify-content: space-between; max-width: 820px; margin-bottom: 40px; position: relative; z-index: 1; }
+.objectives-container { display: flex; justify-content: space-between; max-width: 820px; margin-bottom: 40px; position: relative; z-index: 2; }
 .objectives-column { width: 50%; }
 .objectives-column p { font-size: 12.5px; color: #444; line-height: 1.5; margin: 0 0 12px 0; padding-left: 12px; position: relative; }
 .objectives-column p::before { content: "•"; position: absolute; left: 0; color: #555; font-weight: bold; }
@@ -353,7 +353,7 @@ position: relative;
 
 @media print {
     html, body {
-        width: 296mm !important;
+        width: 297mm !important;
         height: 210mm !important;
         margin: 0 !important;
         padding: 0 !important;
@@ -380,9 +380,9 @@ position: relative;
     #certificate-area {
         position: fixed !important;
         top: 50% !important;
-        left: 70% !important;
+        left: 50% !important;
         margin: 0 !important;
-        transform: translate(-50%, -50%) scale(0.100) !important;
+        transform: translate(-50%, -50%) scale(0.95) !important;
         transform-origin: center center !important;
         break-inside: avoid;
         page-break-inside: avoid;
@@ -741,7 +741,7 @@ async function finishExam(manual){
         <div class="student-name-highlight" id="cert-student-name">Student Name</div>
         <div class="completion-statement">has successfully completed the Final Project course requirements and academic simulation modules for attending: <font>(CCNA 200-301)</font> course simulation modules.</div>
         
-        <div class="objectives-container">	<center>
+        <div class="objectives-container">	
             <div class="objectives-column">
 			
                 <p>Explain the importance of Network Fundamentals.</p>
@@ -752,7 +752,7 @@ async function finishExam(manual){
                 <p>Explain the importance of IP Services.</p>
 				<p>Explain the importance of Security Fundamentals.</p>
 				<p>Explain the importance of Automation and Programs.</p>
-            </div></center>
+            </div>
         </div>
       
 
