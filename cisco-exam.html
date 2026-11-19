@@ -127,7 +127,7 @@ position: relative;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://w3.org' viewBox='0 0 400 300' width='100%25' height='100%25'%3E%3Cpath d='M150 0 C 220 80, 300 40, 400 90 M 180 0 C 240 90, 310 50, 400 110 M 210 0 C 260 100, 320 60, 400 130 M 240 0 C 280 110, 330 70, 400 150 M 270 0 C 300 120, 340 80, 400 170 M 300 0 C 320 130, 350 90, 400 190 M 330 0 C 340 140, 360 100, 400 210' fill='none' stroke='%23e2e8f0' stroke-width='0.75' opacity='0.7'/%3E%3C/svg%3E");
     
     /* ضبط تموضع الموجات لتبدأ وتتركز في أعلى اليمين فقط كما في الصورة */
-    background-repeat: no-repeat;
+    background-repeat: repeat;
     background-position: top right;
     background-size: 55% auto; /* التحكم في المساحة التي تغطيها الموجات */
 
@@ -146,7 +146,7 @@ position: relative;
   /* تم إصلاح رابط xmlns ليعمل المتصفح بشكل سليم */
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://w3.org' viewBox='0 0 1440 400' width='100%25' height='100%25' preserveAspectRatio='none'%3E%3Cpath d='M0,96 C240,140 480,40 720,120 C960,200 1200,60 1440,110 L1440,0 L0,0 Z' fill='none' stroke='%23007aa6' stroke-width='0.6' opacity='0.4'/%3E%3Cpath d='M0,150 C300,90 600,210 900,130 C1200,50 1350,170 1440,120' fill='none' stroke='%2300b4d8' stroke-width='0.5' opacity='0.3'/%3E%3Cpath d='M0,40 C200,100 500,20 800,150 C1100,280 1300,110 1440,160' fill='none' stroke='%23cbd5e1' stroke-width='0.7' opacity='0.5'/%3E%3C/svg%3E");
     
-  background-repeat: no-repeat;
+  background-repeat: repeat;
   background-size: 100% 100%; /* جعل الموجات تتمدد لتملأ أبعاد الهيدر بالكامل */
   background-position: center center;
 }
@@ -204,7 +204,7 @@ position: relative;
     transform: rotate(-12deg); 
     
     /* الشفافية والتأثير الحبري المتلاشي الناعم */
-    opacity: 0.82;
+    opacity: 0.80;
     mix-blend-mode: multiply; /* يجعل الختم يتداخل مع الخطوط المموجة تحته كالحبر الحقيقي */
     
     /* إضافة خشونة خفيفة على الختم لمحاكاة حبر الأختام الجاف */
@@ -266,7 +266,7 @@ position: relative;
 .engovation-logo-mini {
     position: absolute;
     top: 0px;   /* مسافة البعد عن الحافة العلوية للشهادة */
-    right: -725px;  /* دفع الشعار بالكامل لأقصى اليمين */
+    right: -729px;  /* دفع الشعار بالكامل لأقصى اليمين */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -276,7 +276,7 @@ position: relative;
     width: 135px; /* الحجم الصغير المحفوظ */
     box-sizing: border-box;
     text-align: center;
-    z-index: 20; /* لضمان ظهوره فوق الخطوط المموجة في الخلفية */
+    z-index: 22; /* لضمان ظهوره فوق الخطوط المموجة في الخلفية */
 }
 
 /* تصغير أبعاد رسمة الـ SVG بدقة */
@@ -348,7 +348,7 @@ position: relative;
  
 		@page {
     size: A4 landscape;
-    margin: 0;
+    margin: 6mm;
 }
 
 @media print {
