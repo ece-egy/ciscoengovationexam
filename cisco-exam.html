@@ -37,7 +37,7 @@
 
        /* التصميم الجرافيكي للشهادة الأفقية المطابق تماماً للصورة المعطاة */
 #certificate-area {
-    width: 1100px;
+    width: 1050px;
     height: 710px;
     background-color: #fff;
     background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 710" preserveAspectRatio="none"><defs><linearGradient id="f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="white"/><stop offset="0.5" stop-color="white" stop-opacity="0.7"/><stop offset="1" stop-color="white" stop-opacity="0"/></linearGradient><mask id="m"><rect width="1100" height="710" fill="url(%23f)"/></mask><path id="a" d="M-50,110 C250,30 480,230 760,125 S1050,25 1160,85" fill="none"/><path id="b" d="M-50,35 C200,150 520,-25 800,105 S1050,205 1160,150" fill="none"/></defs><g mask="url(%23m)"><g stroke="%23049fd9" stroke-width="1" opacity="0.28"><use href="%23a" y="0"/><use href="%23a" y="6"/><use href="%23a" y="12"/><use href="%23a" y="18"/><use href="%23a" y="24"/><use href="%23a" y="30"/><use href="%23a" y="36"/><use href="%23a" y="42"/><use href="%23a" y="48"/><use href="%23a" y="54"/><use href="%23a" y="60"/><use href="%23a" y="66"/><use href="%23a" y="72"/><use href="%23a" y="78"/><use href="%23a" y="84"/><use href="%23a" y="90"/></g><g stroke="%231b365d" stroke-width="0.9" opacity="0.14"><use href="%23b" y="0"/><use href="%23b" y="7"/><use href="%23b" y="14"/><use href="%23b" y="21"/><use href="%23b" y="28"/><use href="%23b" y="35"/><use href="%23b" y="42"/><use href="%23b" y="49"/><use href="%23b" y="56"/><use href="%23b" y="63"/><use href="%23b" y="70"/><use href="%23b" y="77"/></g><g stroke="%2360bc44" stroke-width="0.9" opacity="0.18"><use href="%23b" y="95"/><use href="%23b" y="102"/><use href="%23b" y="109"/><use href="%23b" y="116"/><use href="%23b" y="123"/><use href="%23b" y="130"/></g></g></svg>');
@@ -172,7 +172,7 @@ position: relative;
 
 /* تنسيق اسم الدكتور بخط يدوي انسيابي */
 .signer-name {
-    font-family: 'Mr Dafoe', 'Brush Script MT', cursive, sans-serif;
+    font-family: 'Mr Dafoe';
     font-size: 20px; /* تكبير الحجم قليلاً لأن خطوط اليد تكون أدق */
     font-weight: 600;
     color: #1e293b; /* لون حبر داكن (رمادي داكن قريباً من الحبر الجاف) */
@@ -326,10 +326,10 @@ position: relative;
 .brand-sub-title span { display: block; font-size: 16px; font-weight: ; color: #049fd9; }
 .cert-main-head { font-size: 32px; font-weight: bold; color: #062b53; margin-bottom: 30px; position: relative; z-index: 2; }
 .student-name-highlight { font-size: 28px; color: #049fd9; margin-bottom: 25px; position: relative; z-index: 2; }
-.completion-statement { font-size: 16px; color: #555; line-height: 1.5; margin-bottom: 30px; max-width: 620px; position: relative; z-index: 2; }
+.completion-statement { font-size: 16px; color: #555; line-height: 1.5; margin-bottom: 30px; max-width: 620px; position: relative; z-index: 1; }
 .completion-statement font { font-weight: bold; color: #222; }
-.objectives-container { display: flex; justify-content: space-between; max-width: 820px; margin-bottom: 40px; position: relative; z-index: 2; }
-.objectives-column { width: 48%; }
+.objectives-container { display: flex; justify-content: space-between; max-width: 820px; margin-bottom: 40px; position: relative; z-index: 1; }
+.objectives-column { width: 50%; }
 .objectives-column p { font-size: 12.5px; color: #444; line-height: 1.5; margin: 0 0 12px 0; padding-left: 12px; position: relative; }
 .objectives-column p::before { content: "•"; position: absolute; left: 0; color: #555; font-weight: bold; }
 .cert-footer-layout { display: flex; justify-content: space-between; align-items: flex-end; position: absolute; bottom: 55px; width: 870px; z-index: 2; }
@@ -347,8 +347,8 @@ position: relative;
 .issuance-date-node { font-size: 12px; color: #222; font-weight: bold; margin-top: 15px; }
 /* ===== الطباعة: A4 Landscape مباشرة بدون تعديل أي إعدادات ===== */
 @page {
-    size: A4 landscape;
-    margin: 8mm;
+    size: A4 landscape !important;
+    margin: 0mm;
 }
 
 @media print {
@@ -761,12 +761,12 @@ async function finishExam(manual){
         <div class="cert-footer-layout">
             <div class="left-footer-badges">
                 <div class="verified-badge-cisco">
-                    <div class="v-badge-top">CISCO SYSTEMS EXAM</div><div class="v-badge-mid">Verified</div><div class="v-badge-bottom">Course Track</div>
+                    <div class="v-badge-top">Network SYSTEMS EXAM</div><div class="v-badge-mid">Verified</div><div class="v-badge-bottom">Course Track</div>
                 </div>
                 <div class="qr-code-">
                     <div class="qr-mock-"></div>
                     <div></div>
-					Cisco Network Final Project®
+					CCNA200-301 Network Final Project®
                 </div>
             </div>
 			  <!-- استدعاء خط Inter للمظهر الرسمي للختم -->
@@ -774,7 +774,7 @@ async function finishExam(manual){
 
 <div class="cisco-accepted-stamp">
     <div class="stamp-inner">
-        <span class="stamp-top-text">Cisco Network Final Project®</span>
+        <span class="stamp-top-text">CCNA200-301 Network Final Project®</span>
         <h2 class="stamp-main-text">ACCEPTED</h2>
         <span class="stamp-date" id="dynamic-stamp-date"> January 12, 2025</span>
     </div>
@@ -782,11 +782,11 @@ async function finishExam(manual){
             <div class="right-footer-sig">
 <div class="handwritten-signature-wrapper">
     <!-- اسم الموقّع بالخط اليدوي -->
-    <span class="signer-name">Dr/Adel Marzouk</span>
+    <span class="signer-name">D.r Adel Marzouk</span>
     
     <!-- تاريخ اجتياز الاختبار المستدعى كأنه مكتوب بخط اليد -->
     
-</div>                <div class="sig-underline-node">D.r/Adel Marzouk<div class="sig-title-sub"><br> Network Instructor</div></div>
+</div>                <div class="sig-underline-node">D.r Adel Marzouk<div class="sig-title-sub"><br> Network Instructor</div></div>
                 <div class="issuance-date-node" id="cert-date">January 12, 2025</div>
             </div>
         </div>
