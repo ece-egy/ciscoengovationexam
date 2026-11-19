@@ -851,7 +851,7 @@ async function finishExam(manual){
         };
         const done = () => holder.remove();
         html2pdf().set(opt).from(clone).save().then(done).catch(done);
-    });
+    }).from(element).save();
 }
     
 </script>
