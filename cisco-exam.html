@@ -344,31 +344,51 @@ position: relative;
 .sig-underline-node { border-top: 1px solid #aaa; width: 260px; margin-top: 3px; padding-top: 5px; font-size: 12px; font-weight: bold; color: #222; }
 .sig-title-sub { font-size: 11px; color: #666; font-weight: normal; margin-top: 2px; }
 .issuance-date-node { font-size: 12px; color: #222; font-weight: bold; margin-top: 15px; }
-@media print {
- 
-		@page {
+/* ===== الطباعة: A4 Landscape مباشرة بدون تعديل أي إعدادات ===== */
+@page {
     size: A4 landscape;
-    margin: 6mm;
+    margin: 0;
 }
 
 @media print {
     html, body {
+        width: 297mm !important;
+        height: 210mm !important;
         margin: 0 !important;
         padding: 0 !important;
-        width: 297mm;
-        height: 210mm;
-        overflow: hidden;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
+        background: #fff !important;
+        overflow: hidden !important;
     }
+    .container {
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: none !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+    }
+    /* إخفاء كل شيء ما عدا الشهادة */
+    #results-screen > *:not(#cert-wrapper),
+    #cert-wrapper > *:not(#certificate-area),
+    .no-print-btn {
+        display: none !important;
+    }
+    #cert-wrapper { margin: 0 !important; }
 
+    /* الشهادة في منتصف الورقة بهوامش آمنة للطابعة */
     #certificate-area {
-        margin: 6mm auto 0 auto !important;
-        zoom: 0.95;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-        page-break-inside: avoid;
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        margin: 0 !important;
+        transform: translate(-50%, -50%) scale(0.96) !important;
+        transform-origin: center center !important;
         break-inside: avoid;
+        page-break-inside: avoid;
+    }
+    #certificate-area, #certificate-area * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
     }
 }
 	 .no-print-btn {
