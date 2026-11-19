@@ -10,6 +10,7 @@
 	<link href="https://googleapis.com" rel="stylesheet">
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	
 <link href="https://fonts.googleapis.com/css2?family=Mrs+Saint+Delafield&family=Herr+Von+Muellerhoff&family=Mr+Dafoe&family=La+Belle+Aurore&display=swap" rel="stylesheet">
 	<link rel="icon" href="/auth/resources/m1kk0/login/skillsforall-theme/img/favicon.ico">
     <style>
@@ -162,16 +163,16 @@ position: relative;
 .handwritten-signature-wrapper {
     display: inline-block;
     text-align: left;
-    padding-left: 50px;
+    padding-left: 60px;
     position: relative;
     /* ميلان خفيف جداً (درجة واحدة) لمحاكاة ميل اليد أثناء التوقيع الحقيقي */
-    transform: rotate(-1.5deg); 
+    transform: rotate(-1.7deg); 
     user-select: none; /* لمنع تحديد النص لتأكيد المظهر الصوري الموقّع */
 }
 
 /* تنسيق اسم الدكتور بخط يدوي انسيابي */
 .signer-name {
-    font-family: 'Mrs Saint Delafield', 'Brush Script MT', cursive, sans-serif;
+    font-family: 'Mr Dafoe', 'Brush Script MT', cursive, sans-serif;
     font-size: 20px; /* تكبير الحجم قليلاً لأن خطوط اليد تكون أدق */
     font-weight: 600;
     color: #1e293b; /* لون حبر داكن (رمادي داكن قريباً من الحبر الجاف) */
@@ -347,7 +348,7 @@ position: relative;
 /* ===== الطباعة: A4 Landscape مباشرة بدون تعديل أي إعدادات ===== */
 @page {
     size: A4 landscape;
-    margin: 0;
+    margin: 8mm;
 }
 
 @media print {
@@ -739,7 +740,7 @@ async function finishExam(manual){
 </div>
 
         </div>
-        <div class="cert-main-head">This certificate is awarded to</div>
+        <div class="cert-main-head">This Certificate is Awarded To</div>
         <div class="student-name-highlight" id="cert-student-name">Student Name</div>
         <div class="completion-statement">has successfully completed the Final Project course requirements and academic simulation modules for attending: <font>(CCNA 200-301)</font> course simulation modules.</div>
         
@@ -765,7 +766,7 @@ async function finishExam(manual){
                 <div class="qr-code-">
                     <div class="qr-mock-"></div>
                     <div></div>
-					Cisco Networking Academy®
+					Cisco Network Final Project®
                 </div>
             </div>
 			  <!-- استدعاء خط Inter للمظهر الرسمي للختم -->
@@ -773,7 +774,7 @@ async function finishExam(manual){
 
 <div class="cisco-accepted-stamp">
     <div class="stamp-inner">
-        <span class="stamp-top-text">Cisco Networking Academy®</span>
+        <span class="stamp-top-text">Cisco Network Final Project®</span>
         <h2 class="stamp-main-text">ACCEPTED</h2>
         <span class="stamp-date" id="dynamic-stamp-date"> January 12, 2025</span>
     </div>
@@ -785,12 +786,12 @@ async function finishExam(manual){
     
     <!-- تاريخ اجتياز الاختبار المستدعى كأنه مكتوب بخط اليد -->
     
-</div>                <div class="sig-underline-node">D.r/Adel Marzouk<div class="sig-title-sub">Instructor<br>Cisco Networking Academy</div></div>
+</div>                <div class="sig-underline-node">D.r/Adel Marzouk<div class="sig-title-sub"><br> Network Instructor</div></div>
                 <div class="issuance-date-node" id="cert-date">January 12, 2025</div>
             </div>
         </div>
     </div>
-		   <button class="btn btn-pdf" onclick="downloadPDF()">⬇️ تحميل الشهادة PDF (A4 Landscape)</button>
+		   
 <button class="btn" style="margin-top:12px; background:#0d233a;" onclick="window.print()">🖨️ طباعة الشهادة</button>
     <button class="btn" style="margin-top:25px; background:#666;" onclick="window.location.reload()">Back / خروج</button>
 </div>
