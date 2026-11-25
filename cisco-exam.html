@@ -391,7 +391,71 @@ position: relative;
         
     }
 }
-	 
+	 @media print {
+    /* 1. إجبار الطابعة على اختيار الاتجاه العرضي Landscape وإلغاء الحواف الهامشية المتصفحية */
+    @page {
+        size: A4 landscape !important;
+        margin: 15mm;
+		 
+    }
+    
+    /* 2. إخفاء أي عنصر خارج الشهادة (مثل أزرار الطباعة، خلفية الموقع، الإعلانات) */
+    body * {
+        visibility: hidden;
+    }
+    
+    /* 3. إظهار الشهادة ومحتوياتها الداخلية فقط */
+    #certificate-area, #certificate-area * {
+	
+        visibility: visible;
+    }
+    
+    /* 4. حفر موقع الشهادة في النقطة صفر للورقة وتمديدها لتملأ الورقة بالكامل */
+    #certificate-area {
+        position: absolute;
+        left: 30px;
+        top: 0;
+        width: 100vw;
+        height: 98.4vh;
+        box-shadow: none; /* إزالة الظلال لمنع الهدر الحبري */
+      /* تثبيت ظهور الإطار كعنصر مطبوع أساسي */
+        border: 12px double #007aa6 !important; 
+        outline: 2px solid #0f172a !important;
+        box-sizing: border-box;
+    
+		
+    }
+    
+    /* إخفاء زر الطباعة نهائياً في الورقة */
+    .no-print-btn {
+        display: none !important;
+    }
+}
+		@page {
+    size: A4 landscape;
+    margin: 0;
+}
+
+@media print {
+    html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 297mm;
+        height: 210mm;
+        overflow: hidden;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    #certificate-area {
+        margin: 6mm auto 0 auto !important;
+        zoom: 0.95;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+}
     </style>
 </head>
 <body>
