@@ -346,51 +346,7 @@ position: relative;
 .sig-title-sub { font-size: 11px; color: #666; font-weight: normal; margin-top: 2px; }
 .issuance-date-node { font-size: 12px; color: #222; font-weight: bold; margin-top: 15px; }
 /* ===== الطباعة: A4 Landscape مباشرة بدون تعديل أي إعدادات ===== */
-@page {
-    size: A4 landscape !important;
-    margin: 0mm;
-}
 
-@media print {
-    html, body {
-        width: 296mm !important;
-        height: 211mm !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        background: #fff !important;
-        overflow: hidden !important;
-    }
-    .container {
-        max-width: none !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        background: none !important;
-        box-shadow: none !important;
-        border-radius: 0 !important;
-    }
-    /* إخفاء كل شيء ما عدا الشهادة */
-    #results-screen > *:not(#cert-wrapper),
-    #cert-wrapper > *:not(#certificate-area),
-    .no-print-btn {
-        display: none !important;
-    }
-    #cert-wrapper { margin: 0 !important; }
-
-    /* الشهادة في منتصف الورقة بهوامش آمنة للطابعة */
-    #certificate-area {
-        position: fixed !important;
-        top: 40% !important;
-        left: 40% !important;
-        margin: 0 !important;
-        transform: translate(-50%, -50%) scale(0.96) !important;
-        transform-origin: center center !important;
-        break-inside: avoid;
-        page-break-inside: avoid;
-    }
-    #certificate-area, #certificate-area * {
-        
-    }
-}
 	 @media print {
     /* 1. إجبار الطابعة على اختيار الاتجاه العرضي Landscape وإلغاء الحواف الهامشية المتصفحية */
     @page {
