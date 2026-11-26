@@ -368,16 +368,24 @@ position: relative;
     
     /* 4. حفر موقع الشهادة في النقطة صفر للورقة وتمديدها لتملأ الورقة بالكامل */
     #certificate-area {
-        position: absolute;
-		left: 0px;
-        width: 288.5mm;
-        height: 210mm;
-        box-shadow: none; /* إزالة الظلال لمنع الهدر الحبري */
-      /* تثبيت ظهور الإطار كعنصر مطبوع أساسي */
-        border: 12px double #007aa6 !important; 
+  position: relative;
+  width: 297mm;
+  height: 206.5mm;        /* أقل بشوية من 210 عشان ما يعملش صفحة زيادة */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  box-shadow: none;
+  overflow: hidden;
+  page-break-after: avoid;
+  page-break-inside: avoid;
+
+   border: 12px double #007aa6 !important; 
         outline: 2px solid #0f172a !important;
         box-sizing: border-box;
-    }
+  outline-offset: -2px;   /* يخلي الـ outline جوه الحدود ومايتقصش */
+}
+       
+    
     
     /* إخفاء زر الطباعة نهائياً في الورقة */
     .no-print-btn {
