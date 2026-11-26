@@ -654,7 +654,16 @@ async function finishExam(manual){
  const pf=document.getElementById('ptFile').files[0],gf=document.getElementById('gns3File').files[0];
  if(manual&&(!pf||!gf)){alert("⚠️ لازم ترفع ملف مشروع Packet Tracer وملف مشروع GNS3 الأول.");return}
  clearInterval(countdownInterval);
- let ok=0;generatedQuestions.forEach((it,n)=>{const v=document.querySelector(`input[name="rad_q${n+1}"]:checked`);if(v&&v.value===it.ans)ok++});
+ llet ok = 0; const wrong = [];
+generatedQuestions.forEach((it, n) => {
+    const v = document.querySelector(`input[name="rad_q${n+1}"]:checked`);
+    if (v && v.value === it.ans) ok++;
+    else wrong.push({
+        n: n + 1, q: it.q,
+        mine: v ? v.value + ") " + it.o['ABCD'.indexOf(v.value)] : "— لم تتم الإجابة —",
+        right: it.ans + ") " + it.o['ABCD'.indexOf(it.ans)]
+    });
+});
  const theory=Math.round(ok/120*40),logs=[`<li style="margin-bottom:8px"><b>📝 النظري:</b> ${ok}/120 إجابة صحيحة = ${theory}/40</li>`];
  let pt=0,g3=0,readable=true;
  if(pf){const x=await readPT(pf);if(x)pt=grade(PT_RUBRIC,x.toLowerCase(),"PT",logs);else{readable=false;logs.push(`<li style="color:#dc2626">❌ تعذّر فك تشفير ملف Packet Tracer (صيغة غير مدعومة أو ملف تالف) — 0/30</li>`)}}
@@ -665,7 +674,7 @@ async function finishExam(manual){
  document.getElementById('txtPTScore').innerText=pt+" / 30";
  document.getElementById('txtGNS3Score').innerText=g3+" / 30";
  document.getElementById('score-text').textContent=total+"%";
- document.getElementById('portalDetailsList').innerHTML=logs.join("");
+ document.getElementById('portalDetailsList').innerHTML = logs.join("") + wrongHTML(wrong);
  document.getElementById('finalPortalResult').style.display="block";
  const pf2=document.getElementById('pass-fail-text'),cw=document.getElementById('cert-wrapper');
  if(pass){const code = genCode();
@@ -907,6 +916,49 @@ document.getElementById('cert-code').textContent = code;});
 
     // تأخير بسيط عشان المتصفح يرسم النسخة قبل الطباعة
     setTimeout(() => window.print(), 100);
+}
+	function genCode() {
+    const A = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let s = '';
+    crypto.getRandomValues(new Uint8Array(10)).forEach(x => s += A[x % A.length]);
+    return 'CCNA-' + s.slice(0, 5) + '-' + s.slice(5);
+}
+
+function wrongHTML(w) {
+    if (!w || !w.length) return '<li style="color:#16a34a;margin-top:10px">🎉 لا توجد أخطاء في الأسئلة النظرية</li>';
+    return '<li style="margin-top:12px"><b>❌ الأسئلة الخاطئة (' + w.length + '):</b></li>' +
+        w.map(x => `<li style="margin:6px 0;padding:8px;border:1px solid #fecaca;border-radius:6px;direction:ltr;text-align:left">
+            <b>${x.n}. ${x.q}</b><br>
+            <span style="color:#dc2626">Your answer: ${x.mine}</span><br>
+            <span style="color:#16a34a">Correct: ${x.right}</span></li>`).join('');
+}
+
+function showRecord(r) {
+    switchScreen('results-screen');
+    document.getElementById('txtTheoryScore').innerText = r.theory + " / 40";
+    document.getElementById('txtPTScore').innerText = r.pt + " / 30";
+    document.getElementById('txtGNS3Score').innerText = r.g3 + " / 30";
+    document.getElementById('score-text').textContent = r.total + "%";
+    const pf = document.getElementById('pass-fail-text');
+    pf.textContent = "Certificate Verified ✔";
+    pf.style.color = "green";
+    document.getElementById('portalDetailsList').innerHTML = r.logs.join("") + wrongHTML(r.wrong);
+    document.getElementById('finalPortalResult').style.display = "block";
+    document.getElementById('cert-student-name').textContent = r.name;
+    document.getElementById('cert-date').textContent = r.date;
+    document.getElementById('dynamic-stamp-date').textContent = r.date;
+    document.getElementById('cert-code').textContent = r.code;
+    document.getElementById('cert-wrapper').style.display = 'block';
+}
+
+function verifyCode() {
+    const code = document.getElementById('verify-input').value.trim().toUpperCase();
+    const msg = document.getElementById('verify-msg');
+    let raw = null;
+    try { raw = localStorage.getItem('cert:' + code); } catch (e) {}
+    if (!raw) { msg.textContent = '❌ الكود غير صحيح أو غير موجود على هذا الجهاز'; return; }
+    msg.textContent = '';
+    showRecord(JSON.parse(raw));
 }
 </script>
 
