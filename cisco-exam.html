@@ -424,6 +424,7 @@ position: relative;
             <div class="form-group"><label>كلمة المرور</label><input type="password" id="login-pass" required></div>
             <button class="btn" onclick="handleLogin()">تسجيل الدخول</button>
             <div class="auth-toggle">ليس لديك حساب؟ <span onclick="switchScreen('register-screen')">سجل الآن هنا</span></div>
+            <div class="auth-toggle">🎓 اجتزت الاختبار؟ <span onclick="switchScreen('cert-login-screen')">الدخول بكود الشهادة</span></div>
         </div>
     </div>
 
@@ -454,7 +455,18 @@ position: relative;
         </div>
     </div>
 
-    <!-- شاشة الامتحان والمؤقت التنازلي -->
+    <div id="verify-screen" class="screen"><div class="auth-form">
+  <h2 align="Center">تأكيد البريد الإلكتروني</h2>
+  <p style="direction:rtl;text-align:center;font-size:14px;color:#555">تم إرسال كود من 6 أرقام لبريدك (صالح 10 دقائق). بعد التأكيد يبدأ الاختبار فوراً ولا يمكن الدخول مرة أخرى.</p>
+  <div class="form-group"><label>كود التأكيد</label><input type="text" id="verify-code" maxlength="6" inputmode="numeric"></div>
+  <button class="btn" onclick="handleVerify()">تأكيد وبدء الاختبار</button>
+  <div class="auth-toggle"><span onclick="switchScreen('login-screen')">رجوع</span></div></div></div>
+<div id="cert-login-screen" class="screen"><div class="auth-form">
+  <h2 align="Center">الدخول بكود الشهادة</h2>
+  <div class="form-group"><label>كود الشهادة</label><input type="text" id="cert-login-code" placeholder="CCNA-XXXX-XXXX-XXXX" style="direction:ltr"></div>
+  <button class="btn" onclick="handleCertLogin()">عرض الشهادة وكشف الدرجات</button>
+  <div class="auth-toggle"><span onclick="switchScreen('login-screen')">رجوع</span></div></div></div>
+<!-- شاشة الامتحان والمؤقت التنازلي -->
     <div id="exam-screen" class="screen">
         <div class="header">
             <div><div class="logo">CCNA Course EXAM</div><div id="user-display" style="font-size:13px; color:#666;"></div></div>
@@ -791,6 +803,7 @@ async function finishExam(manual){
     
 </div>                <div class="sig-underline-node">D.r Adel Marzouk<div class="sig-title-sub"><br> Network's Instructor</div></div>
                 <div class="issuance-date-node" id="cert-date">January 12, 2025</div>
+<div style="position:absolute;left:40px;bottom:24px;font:bold 13px monospace;color:#0d233a;z-index:3">Certificate ID: <span id="cert-code">—</span></div>
             </div>
         </div>
     </div>
@@ -805,24 +818,55 @@ async function finishExam(manual){
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
     }
-    function handleRegister() {
-        const name = document.getElementById('reg-name').value.trim();
-        const email = document.getElementById('reg-email').value.trim().toLowerCase();
-        const pass = document.getElementById('reg-pass').value;
-        if(!name || !email || !pass) { alert("Please fill all fields"); return; }
-        localStorage.setItem(email, JSON.stringify({ name: name, pass: pass }));
-        alert("Registration Successful!"); switchScreen('login-screen');
+    const API = location.protocol==='file:' ? 'http://localhost:3000' : '';
+    let pendingEmail = null, authToken = null;
+    function devId(){let d=localStorage.getItem('_dev')||(document.cookie.match(/_dev=([^;]+)/)||[])[1];
+        if(!d){d=(crypto.randomUUID?crypto.randomUUID():Date.now()+'-'+Math.random())}
+        localStorage.setItem('_dev',d);document.cookie='_dev='+d+';max-age=315360000;path=/';return d}
+    async function api(path, body){
+        try{const r=await fetch(API+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({deviceId:devId()},body))});
+            const j=await r.json();if(!r.ok)throw new Error(j.error||'Error');return j}
+        catch(e){alert('⚠️ '+(e.message==='Failed to fetch'?'تعذر الاتصال بالسيرفر':e.message));return null}}
+    async function handleRegister() {
+        const name=document.getElementById('reg-name').value.trim(), email=document.getElementById('reg-email').value.trim().toLowerCase(), pass=document.getElementById('reg-pass').value;
+        if(!name||!email||!pass){alert("Please fill all fields");return}
+        if(await api('/api/register',{name,email,pass})){pendingEmail=email;switchScreen('verify-screen')}
     }
-    function handleLogin() {
-        const email = document.getElementById('login-email').value.trim().toLowerCase();
-        const pass = document.getElementById('login-pass').value;
-        const uData = localStorage.getItem(email);
-        if(!uData) { alert("User not found"); return; }
-        const user = JSON.parse(uData);
-        if(user.pass !== pass) { alert("Incorrect password"); return; }
-        currentUser = user.name; document.getElementById('user-display').textContent = "Student: " + currentUser;
-        switchScreen('exam-screen'); startTimer();
+    async function handleLogin() {
+        const email=document.getElementById('login-email').value.trim().toLowerCase(), pass=document.getElementById('login-pass').value;
+        if(await api('/api/login',{email,pass})){pendingEmail=email;switchScreen('verify-screen')}
     }
+    async function handleVerify() {
+        const j=await api('/api/verify',{email:pendingEmail,code:document.getElementById('verify-code').value});
+        if(!j)return;
+        authToken=j.token;currentUser=j.name;document.getElementById('user-display').textContent="Student: "+currentUser;
+        window.onbeforeunload=e=>{if(authToken){e.preventDefault();e.returnValue=''}};
+        switchScreen('exam-screen');startTimer();
+    }
+    function showResult(d){
+        switchScreen('results-screen');const $=id=>document.getElementById(id);
+        $('txtTheoryScore').innerText=d.theory+' / 40';$('txtPTScore').innerText=d.pt+' / 30';$('txtGNS3Score').innerText=d.gns3+' / 30';
+        $('score-text').textContent=d.total+'%';$('portalDetailsList').innerHTML=d.logs;$('finalPortalResult').style.display='block';
+        $('pass-fail-text').textContent='Congratulations! You Passed.';$('pass-fail-text').style.color='green';
+        const dt=new Date(d.date).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+        $('cert-student-name').textContent=d.name;$('cert-date').textContent=dt;$('dynamic-stamp-date').textContent=dt;
+        $('cert-code').textContent=d.certCode;$('cert-wrapper').style.display='block';
+    }
+    async function handleCertLogin() {
+        const j=await api('/api/cert-login',{code:document.getElementById('cert-login-code').value});
+        if(j)showResult(j);
+    }
+    const _fin = finishExam;
+    finishExam = async function(m){
+        await _fin(m);
+        if(!authToken||!document.getElementById('results-screen').classList.contains('active'))return;
+        const n=id=>parseInt(document.getElementById(id).innerText)||0;
+        const j=await api('/api/submit',{token:authToken,theory:n('txtTheoryScore'),pt:n('txtPTScore'),gns3:n('txtGNS3Score'),
+            passed:document.getElementById('cert-wrapper').style.display==='block',logs:document.getElementById('portalDetailsList').innerHTML});
+        authToken=null;
+        if(j&&j.certCode){document.getElementById('cert-code').textContent=j.certCode;
+            alert('🎓 كود الشهادة الخاص بك: '+j.certCode+'\nاحتفظ به؛ تدخل به لاحقاً لعرض الشهادة والدرجات.')}
+    };
     function startTimer() {
         countdownInterval = setInterval(() => {
             let m = Math.floor(totalSeconds / 60); let s = totalSeconds % 60;
