@@ -412,9 +412,7 @@ position: relative;
     letter-spacing: 1.5px;
     z-index: 6;
 }
-@media print {
-    #print-root .print-only { display: block !important; }
-}
+
     </style>
 </head>
 <body>
@@ -912,6 +910,41 @@ document.getElementById('cert-code').textContent = code;});
 }
 </script>
 
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD2PXm1tg0JIWd3gUSAr7yiyn_mRCtFCII",
+  authDomain: "engo-cisco-certificates.firebaseapp.com",
+  projectId: "engo-cisco-certificates",
+  storageBucket: "engo-cisco-certificates.firebasestorage.app",
+  messagingSenderId: "812636057283",
+  appId: "1:812636057283:web:a04622c8ed8986d8937c76"
+};
+const db = getFirestore(initializeApp(firebaseConfig));
+
+window.saveCert = async (rec) => {
+  try { await setDoc(doc(db, "certs", rec.code), rec); return true; }
+  catch (e) { console.error(e); return false; }
+};
+
+window.verifyCode = async () => {
+  const code = document.getElementById('verify-input').value.trim().toUpperCase();
+  const msg = document.getElementById('verify-msg');
+  msg.style.color = '#555';
+  msg.textContent = 'جاري التحقق...';
+  try {
+    const snap = await getDoc(doc(db, "certs", code));
+    if (!snap.exists()) { msg.style.color = '#dc2626'; msg.textContent = '❌ الكود غير صحيح'; return; }
+    msg.textContent = '';
+    showRecord(snap.data());
+  } catch (e) {
+    msg.style.color = '#dc2626';
+    msg.textContent = '⚠️ تعذّر الاتصال، حاول مرة أخرى';
+  }
+};
+</script>
 
 </body>
 </html>
