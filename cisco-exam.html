@@ -369,11 +369,11 @@ position: relative;
     }
 
     /* شيل كل حاجة من التخطيط ما عدا الشهادة */
-    body.printing > *:not(#print-root) {
+    body.printing > *:not(#print-root1) {
         display: none !important;
     }
 
-    #print-root {
+    #print-root1 {
         display: block !important;
         position: absolute;
         top: 0;
@@ -383,7 +383,7 @@ position: relative;
         overflow: hidden;
     }
 
-    #print-root #certificate-area {
+    #print-root1 #certificate-area {
         position: absolute !important;
         top: 0 !important;
         left: 0 !important;
@@ -865,7 +865,7 @@ async function finishExam(manual){
     if (!original) return;
 
     const wrap = document.createElement('div');
-    wrap.id = 'print-root';
+    wrap.id = 'print-root1';
     wrap.appendChild(original.cloneNode(true));
     document.body.appendChild(wrap);
     document.body.classList.add('printing');
