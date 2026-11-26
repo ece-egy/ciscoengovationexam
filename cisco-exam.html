@@ -390,10 +390,17 @@ html, body {
   margin: 0;
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
-}
+    body * {
+        visibility: hidden;
+		
+    }
+    
+    /* 3. إظهار الشهادة ومحتوياتها الداخلية فقط */
+    #certificate-area, #certificate-area * {
+	
+        visibility: visible;
+    }
+
 
 /* 2) إجبار المتصفح يطبع الألوان والخلفيات */
 * {
