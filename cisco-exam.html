@@ -654,7 +654,7 @@ async function finishExam(manual){
  const pf=document.getElementById('ptFile').files[0],gf=document.getElementById('gns3File').files[0];
  if(manual&&(!pf||!gf)){alert("⚠️ لازم ترفع ملف مشروع Packet Tracer وملف مشروع GNS3 الأول.");return}
  clearInterval(countdownInterval);
- llet ok = 0; const wrong = [];
+ let ok = 0; const wrong = [];
 generatedQuestions.forEach((it, n) => {
     const v = document.querySelector(`input[name="rad_q${n+1}"]:checked`);
     if (v && v.value === it.ans) ok++;
@@ -677,10 +677,12 @@ generatedQuestions.forEach((it, n) => {
  document.getElementById('portalDetailsList').innerHTML = logs.join("") + wrongHTML(wrong);
  document.getElementById('finalPortalResult').style.display="block";
  const pf2=document.getElementById('pass-fail-text'),cw=document.getElementById('cert-wrapper');
- if(pass){const code = genCode();
+ if(pass){pf2.textContent="Congratulations! You Passed.";pf2.style.color="green";
+  const d=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  const code = genCode();
 const rec = { code, name: currentUser, date: d, total, theory, pt, g3, logs, wrong };
-if (window.saveCert) window.saveCert(rec);
-document.getElementById('cert-code').textContent = code;});
+try { localStorage.setItem('cert:' + code, JSON.stringify(rec)); } catch (e) {}
+document.getElementById('cert-code').textContent = code;
   document.getElementById('cert-student-name').textContent=currentUser;document.getElementById('cert-date').textContent=d;document.getElementById('dynamic-stamp-date').textContent=d;cw.style.display='block'}
  else{pf2.textContent=(pf&&gf)?"Failed to achieve 70%.":"Projects not submitted — no certificate.";pf2.style.color="red";cw.style.display='none'}}
 </script>
