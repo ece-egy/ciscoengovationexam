@@ -954,15 +954,6 @@ function showRecord(r) {
     document.getElementById('cert-wrapper').style.display = 'block';
 }
 
-function verifyCode() {
-    const code = document.getElementById('verify-input').value.trim().toUpperCase();
-    const msg = document.getElementById('verify-msg');
-    let raw = null;
-    try { raw = localStorage.getItem('cert:' + code); } catch (e) {}
-    if (!raw) { msg.textContent = '❌ الكود غير صحيح أو غير موجود على هذا الجهاز'; return; }
-    msg.textContent = '';
-    showRecord(JSON.parse(raw));
-}
 </script>
 
 <script type="module">
