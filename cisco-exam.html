@@ -369,7 +369,7 @@ html, body {
 /* 3) الشهادة */
 #certificate-area {
   position: relative;
-  width: 297mm;
+  width: 295mm;
   height: 206.5mm;        /* أقل بشوية من 210 عشان ما يعملش صفحة زيادة */
   margin: 0;
   padding: 36px 36px;;
@@ -384,7 +384,48 @@ html, body {
   outline-offset: -2px;   /* يخلي الـ outline جوه الحدود ومايتقصش */
 }
 
+/* 1) إلغاء هوامش الطابعة وتحديد حجم الورقة */
+@page {
+  size: A4 landscape;
+  margin: 0;
+}
 
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+/* 2) إجبار المتصفح يطبع الألوان والخلفيات */
+* {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* 3) الشهادة */
+#certificate-area {
+  position: relative;
+  width: 295mm;
+  height: 209.5mm;        /* أقل بشوية من 210 عشان ما يعملش صفحة زيادة */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  box-shadow: none;
+  overflow: hidden;
+  page-break-after: avoid;
+  page-break-inside: avoid;
+
+  border: 12px double #007aa6;
+  outline: 2px solid #0f172a;
+  outline-offset: -2px;   /* يخلي الـ outline جوه الحدود ومايتقصش */
+}
+
+@media print {
+  html, body {
+    width: 295mm;
+    height: 206.5mm;
+    overflow: hidden;
+  }
+}
  
 
 
