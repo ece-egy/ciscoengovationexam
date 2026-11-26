@@ -391,50 +391,9 @@ html, body {
     overflow: hidden;
   }
 }
-    @page {
-        size: A4 landscape !important;
-        margin: default !important;
-	
-		
-		 
-    }
-    
-    /* 2. إخفاء أي عنصر خارج الشهادة (مثل أزرار الطباعة، خلفية الموقع، الإعلانات) */
-    body * {
-        visibility: hidden;
-		
-    }
-    
-    /* 3. إظهار الشهادة ومحتوياتها الداخلية فقط */
-    #certificate-area, #certificate-area * {
-	
-        visibility: visible;
-    }
-    
-    /* 4. حفر موقع الشهادة في النقطة صفر للورقة وتمديدها لتملأ الورقة بالكامل */
-    #certificate-area {
-        position: absolute;
-        left: 0.5px;
-        top: 0.44px;
-		right: 0.22px;
-		botom: 0px;
-        width: 297mm;
-        height: 209mm;
-        box-shadow: none; /* إزالة الظلال لمنع الهدر الحبري */
-      /* تثبيت ظهور الإطار كعنصر مطبوع أساسي */
-        border: 12px double #007aa6 !important; 
-        outline: 2px solid #0f172a !important;
-        box-sizing: border-box;
-    
-		
-    }
-    
-    /* إخفاء زر الطباعة نهائياً في الورقة */
-    .no-print-btn {
+  .no-print-btn {
         display: none !important;
     }
-
-		
 
 
 
