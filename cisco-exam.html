@@ -351,12 +351,7 @@ position: relative;
     /* 1. إجبار الطابعة على اختيار الاتجاه العرضي Landscape وإلغاء الحواف الهامشية المتصفحية */
     @page {
         size: A4 landscape !important;
-        margin: 0;
-		margin-left: 0.5mm;
-		margin-top: 0.19mm;
-		margin-botom: 0.19mm;
-		
-		 
+        margin: none;
     }
     
     /* 2. إخفاء أي عنصر خارج الشهادة (مثل أزرار الطباعة، خلفية الموقع، الإعلانات) */
@@ -374,28 +369,22 @@ position: relative;
     /* 4. حفر موقع الشهادة في النقطة صفر للورقة وتمديدها لتملأ الورقة بالكامل */
     #certificate-area {
         position: absolute;
-        left: 50px;
-        top: 0;
-        width: 295mm;
-        height: 209mm;
+		left: 5px;
+        top: 5px;
+		right: 5px;
+        width: 296mm;
+        height: 206.5mm;
         box-shadow: none; /* إزالة الظلال لمنع الهدر الحبري */
       /* تثبيت ظهور الإطار كعنصر مطبوع أساسي */
         border: 12px double #007aa6 !important; 
         outline: 2px solid #0f172a !important;
         box-sizing: border-box;
-    
-		
     }
     
     /* إخفاء زر الطباعة نهائياً في الورقة */
     .no-print-btn {
         display: none !important;
     }
-
-		
-
-
-
     </style>
 </head>
 <body>
