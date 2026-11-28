@@ -1018,25 +1018,25 @@ function showStatus(s) {
 }
 
 // بعد تسجيل الدخول: يحدد هل يدخل الاختبار أو تظهر له رسالة
-async function routeStudent() {
+async function routeStudent(msgId) {
   const u = auth.currentUser;
   try {
     const snap = await getDoc(doc(db, 'students', u.uid));
-    if (!snap.exists()) { say('login-msg', '❌ لا توجد بيانات لهذا الحساب'); await signOut(auth); return; }
+    if (!snap.exists()) { say(msgId, '❌ لا توجد بيانات لهذا الحساب'); await signOut(auth); return; }
     const s = snap.data();
     if (s.status === 'registered') {
       const b = writeBatch(db);
       b.update(doc(db, 'students', u.uid), { status: 'started', startedAt: serverTimestamp() });
       b.update(doc(db, 'names', nameKey(s.name)), { status: 'started' });
       await b.commit();
-      say('login-msg', '');
+      say(msgId, '');
       enterExam(s.name);
     } else {
       showStatus(s);
     }
   } catch (e) {
     console.error(e);
-    say('login-msg', '⚠️ تعذّر الاتصال، حاول مرة أخرى');
+    say(msgId, '⚠️ تعذّر قراءة بيانات الحساب ' + errText(e));
   }
 }
 
@@ -1047,10 +1047,12 @@ window.handleLogin = async () => {
   say('login-msg', 'جاري الدخول...', '#555');
   try { await signInWithEmailAndPassword(auth, email, pass); }
   catch (e) {
-    say('login-msg', e.code === 'auth/network-request-failed' ? '⚠️ تعذّر الاتصال' : '❌ البريد أو كلمة المرور غير صحيحة');
+    console.error(e);
+    const bad = ['auth/invalid-credential', 'auth/wrong-password', 'auth/user-not-found', 'auth/invalid-email'];
+    say('login-msg', bad.includes(e.code) ? '❌ البريد أو كلمة المرور غير صحيحة' : '⚠️ تعذّر تسجيل الدخول ' + errText(e));
     return;
   }
-  await routeStudent();
+  await routeStudent('login-msg');
 };
 
 window.handleRegister = async () => {
@@ -1063,27 +1065,28 @@ window.handleRegister = async () => {
   if (!key) { say('reg-msg', 'اكتب اسماً صحيحاً'); return; }
   say('reg-msg', 'جاري التحقق...', '#555');
 
-  // 1) هل الاسم مسجّل من قبل؟
   try {
     const nm = await getDoc(doc(db, 'names', key));
     if (nm.exists()) { say('reg-msg', dupMessage(name, nm.data())); return; }
-  } catch (e) { say('reg-msg', '⚠️ تعذّر الاتصال، حاول مرة أخرى'); return; }
-
-  // 2) إنشاء الحساب
-  let cred;
-  try { cred = await createUserWithEmailAndPassword(auth, email, pass); }
-  catch (e) {
-    if (e.code === 'auth/email-already-in-use') {
-      // الإيميل مسجّل: لو كلمة المرور صحيحة نعرض حالة الحساب
-      try { await signInWithEmailAndPassword(auth, email, pass); await routeStudent(); }
-      catch (_) { say('reg-msg', '❌ هذا البريد مسجّل من قبل. سجّل الدخول من الصفحة الرئيسية.'); }
-      return;
-    }
-    say('reg-msg', e.code === 'auth/invalid-email' ? '❌ البريد غير صحيح' : '⚠️ تعذّر إنشاء الحساب، حاول مرة أخرى');
+  } catch (e) {
+    console.error(e);
+    say('reg-msg', '⚠️ تعذّر فحص الاسم ' + errText(e));
     return;
   }
 
-  // 3) حفظ الطالب والاسم معاً (لو الاسم اتسجل في نفس اللحظة تفشل العملية)
+  let cred;
+  try { cred = await createUserWithEmailAndPassword(auth, email, pass); }
+  catch (e) {
+    console.error(e);
+    if (e.code === 'auth/email-already-in-use') {
+      try { await signInWithEmailAndPassword(auth, email, pass); await routeStudent('reg-msg'); }
+      catch (_) { say('reg-msg', '❌ هذا البريد مسجّل من قبل. سجّل الدخول من الصفحة الرئيسية.'); }
+      return;
+    }
+    say('reg-msg', e.code === 'auth/invalid-email' ? '❌ البريد غير صحيح' : '⚠️ تعذّر إنشاء الحساب ' + errText(e));
+    return;
+  }
+
   const b = writeBatch(db);
   b.set(doc(db, 'names', key), { uid: cred.user.uid, status: 'registered', total: null });
   b.set(doc(db, 'students', cred.user.uid), {
@@ -1091,8 +1094,9 @@ window.handleRegister = async () => {
   });
   try { await b.commit(); }
   catch (e) {
+    console.error(e);
     await deleteUser(cred.user).catch(() => {});
-    say('reg-msg', '⛔ هذا الطالب مسجّل من قبل. لا يمكن إنشاء حساب جديد بنفس الاسم.');
+    say('reg-msg', '⛔ تعذّر حفظ الطالب (الاسم مسجّل من قبل أو القواعد غير منشورة) ' + errText(e));
     return;
   }
   await signOut(auth);
