@@ -7,6 +7,61 @@
     <!-- استدعاء مكتبة تحويل الويب إلى PDF بشكل مباشر وآمن -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+	<script>
+(function () {
+  'use strict';
+  const stop = e => { e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation(); return false; };
+  const opt = { capture: true, passive: false };
+
+  // 1) القائمة السياقية (كليك يمين، ومفتاح القائمة، وShift+F10)
+  ['contextmenu', 'auxclick'].forEach(ev => {
+    window.addEventListener(ev, stop, opt);
+    document.addEventListener(ev, stop, opt);
+  });
+  document.documentElement.oncontextmenu = () => false;
+
+  // 2) الزر الأيمن نفسه (mousedown / mouseup / pointerdown)
+  ['mousedown', 'mouseup', 'pointerdown', 'pointerup'].forEach(ev =>
+    window.addEventListener(ev, e => { if (e.button === 2) stop(e); }, opt));
+
+  // 3) الضغط المطوّل على الموبايل (بيفتح قائمة السياق هناك)
+  let t;
+  window.addEventListener('touchstart', e => {
+    if (e.target.closest && e.target.closest('input, textarea')) return;
+    t = setTimeout(() => { try { getSelection().removeAllRanges(); } catch (_) {} }, 350);
+  }, { capture: true, passive: true });
+  ['touchend', 'touchmove', 'touchcancel'].forEach(ev =>
+    window.addEventListener(ev, () => clearTimeout(t), { capture: true, passive: true }));
+
+  // 4) اختصارات لوحة المفاتيح (الطباعة Ctrl+P متروكة شغّالة)
+  window.addEventListener('keydown', e => {
+    const k = (e.key || '').toLowerCase();
+    const c = e.ctrlKey || e.metaKey;
+    const bad =
+      e.key === 'F12' ||
+      e.key === 'ContextMenu' ||
+      (e.shiftKey && e.key === 'F10') ||
+      (c && e.shiftKey && ['i', 'j', 'c', 'k', 'e'].includes(k)) ||  // أدوات المطور
+      (c && e.altKey && ['i', 'j', 'c', 'u'].includes(k)) ||          // نسخة ماك
+      (c && ['u', 's'].includes(k));                                  // عرض المصدر / حفظ
+    if (bad) stop(e);
+  }, opt);
+
+  // 5) منع السحب والتحديد والنسخ (مع السماح داخل حقول الإدخال)
+  const inField = e => e.target.closest && e.target.closest('input, textarea');
+  ['dragstart', 'selectstart', 'copy', 'cut'].forEach(ev =>
+    document.addEventListener(ev, e => { if (!inField(e)) stop(e); }, opt));
+
+  // 6) CSS
+  const st = document.createElement('style');
+  st.textContent = `
+    html, body { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+    input, textarea { -webkit-user-select: text; user-select: text; }
+    img, svg { -webkit-user-drag: none; }
+  `;
+  document.head.appendChild(st);
+})();
+</script>
 	<link href="https://googleapis.com" rel="stylesheet">
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
