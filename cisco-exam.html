@@ -470,7 +470,9 @@ position: relative;
             <div class="form-group"><label>البريد الإلكتروني</label><input type="email" id="reg-email" required></div>
             <div class="form-group"><label>كلمة المرور</label><input type="password" id="reg-pass" required></div>
             <button class="btn" onclick="handleRegister()">إنشاء الحساب</button>
+			<p id="reg-msg" style="text-align:center;font-weight:bold;direction:rtl;line-height:1.8"></p>
             <div class="auth-toggle">لديك حساب بالفعل؟ <span onclick="switchScreen('login-screen')">تسجيل الدخول</span></div>
+			<p id="login-msg" style="text-align:center;font-weight:bold;direction:rtl"></p>
         </div>
     </div>
 <div id="verify-screen" class="screen" style="text-align:center">
@@ -482,6 +484,18 @@ position: relative;
     <button class="btn" onclick="verifyCode()">تحقق</button>
     <p id="verify-msg" style="color:#dc2626;font-weight:bold"></p>
     <div class="auth-toggle"><span onclick="switchScreen('login-screen')">رجوع</span></div>
+</div>
+	<div id="status-screen" class="screen" style="text-align:center">
+    <h2 id="status-title"></h2>
+    <p id="status-msg" style="font-size:16px;line-height:2;direction:rtl"></p>
+    <div id="status-code-box" style="display:none;margin:15px 0;padding:15px;background:#f1f5f9;border-radius:10px">
+        <div style="direction:ltr;font-size:18px">Certificate Code: <b id="status-code"></b></div>
+        <button class="btn" style="margin-top:12px" onclick="verifyFromStatus()">🔍 عرض الشهادة والتحقق منها</button>
+    </div>
+    <div class="auth-toggle">
+        <span onclick="switchScreen('verify-screen')">التحقق من شهادة بكود آخر</span> |
+        <span onclick="window.location.reload()">رجوع</span>
+    </div>
 </div>
     <!-- شاشة الامتحان والمؤقت التنازلي -->
     <div id="exam-screen" class="screen">
@@ -679,15 +693,22 @@ generatedQuestions.forEach((it, n) => {
  document.getElementById('portalDetailsList').innerHTML = logs.join("") + wrongHTML(wrong);
  document.getElementById('finalPortalResult').style.display="block";
  const pf2=document.getElementById('pass-fail-text'),cw=document.getElementById('cert-wrapper');
- if(pass){pf2.textContent="Congratulations! You Passed.";pf2.style.color="green";
+ if(pass){
+  pf2.textContent="Congratulations! You Passed.";pf2.style.color="green";
   const d=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
-  const code = genCode();
-const rec = { code, name: currentUser, date: d, total, theory, pt, g3, logs, wrong };
-const saved = window.saveCert ? await window.saveCert(rec) : false;
-if (!saved) alert("⚠️ تعذّر حفظ الشهادة على السيرفر. سجّل الكود وحاول التحقق منه لاحقاً.");
-document.getElementById('cert-code').textContent = code;
-  document.getElementById('cert-student-name').textContent=currentUser;document.getElementById('cert-date').textContent=d;document.getElementById('dynamic-stamp-date').textContent=d;cw.style.display='block'}
- else{pf2.textContent=(pf&&gf)?"Failed to achieve 70%.":"Projects not submitted — no certificate.";pf2.style.color="red";cw.style.display='none'}}
+  const code=genCode();
+  document.getElementById('cert-code').textContent=code;
+  document.getElementById('cert-student-name').textContent=currentUser;
+  document.getElementById('cert-date').textContent=d;
+  document.getElementById('dynamic-stamp-date').textContent=d;
+  cw.style.display='block';
+  const saved=await window.finalizeExam({status:'passed',total,theory,pt,g3,logs,wrong,date:d,code});
+  if(!saved) alert("⚠️ تعذّر حفظ النتيجة على السيرفر. سجّل كود الشهادة: "+code+" وتواصل مع المدرب.");
+ }else{
+  pf2.textContent=(pf&&gf)?"Failed to achieve 70%.":"Projects not submitted — no certificate.";
+  pf2.style.color="red";cw.style.display='none';
+  await window.finalizeExam({status:'failed',total,theory,pt,g3,logs,wrong});
+ }}
 </script>
 
 <!-- ==================== نهاية جزء مصحح المشروع الآلي الجديد ==================== -->
@@ -856,16 +877,12 @@ document.getElementById('cert-code').textContent = code;
         localStorage.setItem(email, JSON.stringify({ name: name, pass: pass }));
         alert("Registration Successful!"); switchScreen('login-screen');
     }
-    function handleLogin() {
-        const email = document.getElementById('login-email').value.trim().toLowerCase();
-        const pass = document.getElementById('login-pass').value;
-        const uData = localStorage.getItem(email);
-        if(!uData) { alert("User not found"); return; }
-        const user = JSON.parse(uData);
-        if(user.pass !== pass) { alert("Incorrect password"); return; }
-        currentUser = user.name; document.getElementById('user-display').textContent = "Student: " + currentUser;
-        switchScreen('exam-screen'); startTimer();
-    }
+    function enterExam(name) {
+    currentUser = name;
+    document.getElementById('user-display').textContent = "Student: " + name;
+    switchScreen('exam-screen');
+    startTimer();
+}
     function startTimer() {
         countdownInterval = setInterval(() => {
             let m = Math.floor(totalSeconds / 60); let s = totalSeconds % 60;
@@ -958,7 +975,9 @@ function showRecord(r) {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, doc, getDoc, writeBatch, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, setPersistence, inMemoryPersistence, createUserWithEmailAndPassword,
+         signInWithEmailAndPassword, signOut, deleteUser } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyD2PXm1tg0JIWd3gUSAr7yiyn_mRCtFCII",
@@ -968,28 +987,167 @@ const firebaseConfig = {
   messagingSenderId: "812636057283",
   appId: "1:812636057283:web:a04622c8ed8986d8937c76"
 };
-const db = getFirestore(initializeApp(firebaseConfig));
 
-window.saveCert = async (rec) => {
-  try { await setDoc(doc(db, "certs", rec.code), rec); return true; }
-  catch (e) { console.error(e); return false; }
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+await setPersistence(auth, inMemoryPersistence); // الجلسة لا تُحفظ في المتصفح
+
+const $ = id => document.getElementById(id);
+const say = (id, text, color = '#dc2626') => { const e = $(id); e.style.color = color; e.textContent = text; };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const nameKey = n => n.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '');
+
+function dupMessage(name, n) {
+  if (n.status === 'passed')
+    return `⛔ الطالب «${name}» مسجّل من قبل وقد اجتاز الاختبار بنسبة ${n.total}%. لا يمكن إنشاء حساب جديد بنفس الاسم. للتحقق من الشهادة استخدم «التحقق من شهادة» من صفحة الدخول.`;
+  if (n.status === 'failed')
+    return `⛔ الطالب «${name}» مسجّل من قبل وأدّى الاختبار ولم يجتز (درجته الفعلية ${n.total}%). الحساب موقوف ولا يمكن إنشاء حساب جديد بنفس الاسم.`;
+  return `⛔ الطالب «${name}» مسجّل من قبل بحساب آخر. سجّل الدخول بالحساب الأول.`;
+}
+
+function showStatus(s) {
+  $('status-code-box').style.display = 'none';
+  if (s.status === 'passed') {
+    $('status-title').textContent = '✅ هذا الحساب مسجّل وقد اجتاز الاختبار';
+    $('status-msg').innerHTML = `الطالب <b>${esc(s.name)}</b> اجتاز الاختبار بنسبة <b>${s.total}%</b>.<br>لا يمكن دخول الاختبار مرة أخرى. يمكنك التحقق من شهادتك بالكود التالي:`;
+    $('status-code').textContent = s.code;
+    $('status-code-box').style.display = 'block';
+  } else if (s.status === 'failed') {
+    $('status-title').textContent = '⛔ هذا الحساب أدّى الاختبار من قبل';
+    $('status-msg').innerHTML = `الطالب <b>${esc(s.name)}</b> أدّى الاختبار ولم يجتز.<br>درجتك الفعلية: <b>${s.total}%</b> (شرط النجاح 70%).<br>لا يمكن دخول الاختبار مرة أخرى بهذا الحساب.`;
+  } else {
+    $('status-title').textContent = '⚠️ تم بدء الاختبار من هذا الحساب من قبل';
+    $('status-msg').innerHTML = `الطالب <b>${esc(s.name)}</b> بدأ الاختبار ولم يتم تسليمه.<br>لا يمكن دخول الاختبار مرة أخرى، تواصل مع المدرب.`;
+  }
+  switchScreen('status-screen');
+}
+
+// بعد تسجيل الدخول: يحدد هل يدخل الاختبار أو تظهر له رسالة
+async function routeStudent() {
+  const u = auth.currentUser;
+  try {
+    const snap = await getDoc(doc(db, 'students', u.uid));
+    if (!snap.exists()) { say('login-msg', '❌ لا توجد بيانات لهذا الحساب'); await signOut(auth); return; }
+    const s = snap.data();
+    if (s.status === 'registered') {
+      const b = writeBatch(db);
+      b.update(doc(db, 'students', u.uid), { status: 'started', startedAt: serverTimestamp() });
+      b.update(doc(db, 'names', nameKey(s.name)), { status: 'started' });
+      await b.commit();
+      say('login-msg', '');
+      enterExam(s.name);
+    } else {
+      showStatus(s);
+    }
+  } catch (e) {
+    console.error(e);
+    say('login-msg', '⚠️ تعذّر الاتصال، حاول مرة أخرى');
+  }
+}
+
+window.handleLogin = async () => {
+  const email = $('login-email').value.trim().toLowerCase();
+  const pass = $('login-pass').value;
+  if (!email || !pass) { say('login-msg', 'أدخل البريد وكلمة المرور'); return; }
+  say('login-msg', 'جاري الدخول...', '#555');
+  try { await signInWithEmailAndPassword(auth, email, pass); }
+  catch (e) {
+    say('login-msg', e.code === 'auth/network-request-failed' ? '⚠️ تعذّر الاتصال' : '❌ البريد أو كلمة المرور غير صحيحة');
+    return;
+  }
+  await routeStudent();
+};
+
+window.handleRegister = async () => {
+  const name = $('reg-name').value.trim().replace(/\s+/g, ' ');
+  const email = $('reg-email').value.trim().toLowerCase();
+  const pass = $('reg-pass').value;
+  if (!name || !email || !pass) { say('reg-msg', 'املأ كل الحقول'); return; }
+  if (pass.length < 6) { say('reg-msg', 'كلمة المرور 6 أحرف على الأقل'); return; }
+  const key = nameKey(name);
+  if (!key) { say('reg-msg', 'اكتب اسماً صحيحاً'); return; }
+  say('reg-msg', 'جاري التحقق...', '#555');
+
+  // 1) هل الاسم مسجّل من قبل؟
+  try {
+    const nm = await getDoc(doc(db, 'names', key));
+    if (nm.exists()) { say('reg-msg', dupMessage(name, nm.data())); return; }
+  } catch (e) { say('reg-msg', '⚠️ تعذّر الاتصال، حاول مرة أخرى'); return; }
+
+  // 2) إنشاء الحساب
+  let cred;
+  try { cred = await createUserWithEmailAndPassword(auth, email, pass); }
+  catch (e) {
+    if (e.code === 'auth/email-already-in-use') {
+      // الإيميل مسجّل: لو كلمة المرور صحيحة نعرض حالة الحساب
+      try { await signInWithEmailAndPassword(auth, email, pass); await routeStudent(); }
+      catch (_) { say('reg-msg', '❌ هذا البريد مسجّل من قبل. سجّل الدخول من الصفحة الرئيسية.'); }
+      return;
+    }
+    say('reg-msg', e.code === 'auth/invalid-email' ? '❌ البريد غير صحيح' : '⚠️ تعذّر إنشاء الحساب، حاول مرة أخرى');
+    return;
+  }
+
+  // 3) حفظ الطالب والاسم معاً (لو الاسم اتسجل في نفس اللحظة تفشل العملية)
+  const b = writeBatch(db);
+  b.set(doc(db, 'names', key), { uid: cred.user.uid, status: 'registered', total: null });
+  b.set(doc(db, 'students', cred.user.uid), {
+    uid: cred.user.uid, name, nameKey: key, email, status: 'registered', createdAt: serverTimestamp()
+  });
+  try { await b.commit(); }
+  catch (e) {
+    await deleteUser(cred.user).catch(() => {});
+    say('reg-msg', '⛔ هذا الطالب مسجّل من قبل. لا يمكن إنشاء حساب جديد بنفس الاسم.');
+    return;
+  }
+  await signOut(auth);
+  say('reg-msg', '');
+  alert('تم إنشاء الحساب بنجاح، سجّل الدخول الآن.');
+  switchScreen('login-screen');
+};
+
+// تسجيل نتيجة الاختبار (نجاح أو رسوب) مرة واحدة
+window.finalizeExam = async (r) => {
+  const u = auth.currentUser;
+  if (!u) return false;
+  try {
+    const s = (await getDoc(doc(db, 'students', u.uid))).data();
+    const b = writeBatch(db);
+    const upd = { status: r.status, total: r.total, finishedAt: serverTimestamp() };
+    if (r.code) upd.code = r.code;
+    b.update(doc(db, 'students', u.uid), upd);
+    b.update(doc(db, 'names', nameKey(s.name)), { status: r.status, total: r.total });
+    if (r.status === 'passed') {
+      b.set(doc(db, 'certs', r.code), {
+        code: r.code, name: s.name, date: r.date, total: r.total,
+        theory: r.theory, pt: r.pt, g3: r.g3, logs: r.logs, wrong: r.wrong
+      });
+    }
+    await b.commit();
+    return true;
+  } catch (e) { console.error(e); return false; }
 };
 
 window.verifyCode = async () => {
-  const code = document.getElementById('verify-input').value.trim().toUpperCase();
-  const msg = document.getElementById('verify-msg');
-  msg.style.color = '#555';
-  msg.textContent = 'جاري التحقق...';
+  const code = $('verify-input').value.trim().toUpperCase();
+  const msg = $('verify-msg');
+  msg.style.color = '#555'; msg.textContent = 'جاري التحقق...';
   try {
-    const snap = await getDoc(doc(db, "certs", code));
+    const snap = await getDoc(doc(db, 'certs', code));
     if (!snap.exists()) { msg.style.color = '#dc2626'; msg.textContent = '❌ الكود غير صحيح'; return; }
     msg.textContent = '';
     showRecord(snap.data());
   } catch (e) {
-    msg.style.color = '#dc2626';
-    msg.textContent = '⚠️ تعذّر الاتصال، حاول مرة أخرى';
+    msg.style.color = '#dc2626'; msg.textContent = '⚠️ تعذّر الاتصال، حاول مرة أخرى';
   }
 };
+
+window.verifyFromStatus = () => {
+  $('verify-input').value = $('status-code').textContent;
+  window.verifyCode();
+};
+
 </script>
 
 </body>
