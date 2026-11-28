@@ -334,7 +334,8 @@ position: relative;
     text-align: center;
     z-index: 2; /* لضمان ظهوره فوق الخطوط المموجة في الخلفية */
 }
-
+#certificate-area .cert-header-layout { width: 100%; }
+#certificate-area .engovation-logo-mini { right: 0; top: 0; }
 /* تصغير أبعاد رسمة الـ SVG بدقة */
 .engovation-svg-mini {
     width: 90%;
@@ -446,8 +447,7 @@ position: relative;
         transform: scale(1.06) !important;   /* 1000px × 1.06 = 1060px، أصغر من عرض الورقة 1122px */
         transform-origin: center center;
     }
-#print-root1 .engovation-svg-mini path[stroke="#ffffff"] { stroke: #0d233a; }
-#print-root1 .white-part { color: #0d233a !important; }
+
     .no-print-btn { display: none !important; }
 }
 
