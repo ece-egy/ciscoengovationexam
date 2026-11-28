@@ -402,11 +402,13 @@ position: relative;
 .issuance-date-node { font-size: 12px; color: #222; font-weight: bold; margin-top: 15px; }
 /* ===== الطباعة: A4 Landscape مباشرة بدون تعديل أي إعدادات ===== */
 
-	/* ===== الطباعة ===== */
+/* ===== الطباعة ===== */
 @page {
     size: A4 landscape;
     margin: 0;
 }
+
+#print-root1 { display: none; }   /* مخفي على الشاشة */
 
 @media print {
     * {
@@ -417,19 +419,19 @@ position: relative;
     html, body {
         margin: 0 !important;
         padding: 0 !important;
-        
         width: 297mm;
         height: 209mm;
         overflow: hidden;
+        background: none !important;
     }
 
-    /* شيل كل حاجة من التخطيط ما عدا الشهادة */
-    body.printing > *:not(#print-root1) {
-        display: none !important;
-    }
+    body.printing > *:not(#print-root1) { display: none !important; }
 
+    /* ورقة A4 كاملة، والشهادة متوسّطة فيها بهامش أمان */
     #print-root1 {
-        display: block !important;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
         position: absolute;
         top: 0;
         left: 0;
@@ -439,36 +441,15 @@ position: relative;
     }
 
     #print-root1 #certificate-area {
-        position: absolute !important;
-        top: 0; !important;
-        left: 0; !important;
+        flex: none;
         margin: 0 !important;
-        width: 1000px !important;
-        height: 710px !important;
-        transform-origin: top left;
-        transform: scale(1.1) !important;   /* 1000px × 1.1 = 1100px تقريباً عرض A4 */
-        border: 12px double #007aa6 !important;
-        outline: 2px solid #0f172a !important;
+        transform: scale(1.06) !important;   /* 1000px × 1.06 = 1060px، أصغر من عرض الورقة 1122px */
+        transform-origin: center center;
     }
-
+#print-root1 .engovation-svg-mini path[stroke="#ffffff"] { stroke: #0d233a; }
+#print-root1 .white-part { color: #0d233a !important; }
     .no-print-btn { display: none !important; }
 }
-#print-root { display: none; }
-		/* كود التحقق: مخفي على الشاشة، يظهر في الطباعة فقط */
-.print-only { display: none; }
-.cert-verify-code {
-    position: absolute;
-	top: 150px;
-    bottom: 1px;
-    left: 100px;
-    right: 0;
-    text-align: left;
-    font-size: 13px;
-    color: #007aa6;
-    letter-spacing: 1.5px;
-    z-index: 6;
-}
-#print-root1 .print-only { display: block !important; }
 
     </style>
 </head>
@@ -966,13 +947,23 @@ generatedQuestions.forEach((it, n) => {
         html2pdf().set(opt).from(clone).save().then(done).catch(done);
     }).from(element).save();
 }
-    function printCertificate() {
+function printCertificate() {
     const original = document.getElementById('certificate-area');
     if (!original) return;
 
+    const clone = original.cloneNode(true);
+
+    // خلّي id الفلتر فريد في النسخة
+    clone.querySelectorAll('filter[id]').forEach(f => {
+        const oldId = f.id, newId = oldId + '-print';
+        f.id = newId;
+        clone.querySelectorAll('[filter="url(#' + oldId + ')"]')
+             .forEach(el => el.setAttribute('filter', 'url(#' + newId + ')'));
+    });
+
     const wrap = document.createElement('div');
     wrap.id = 'print-root1';
-    wrap.appendChild(original.cloneNode(true));
+    wrap.appendChild(clone);
     document.body.appendChild(wrap);
     document.body.classList.add('printing');
 
@@ -983,14 +974,9 @@ generatedQuestions.forEach((it, n) => {
     };
     window.addEventListener('afterprint', cleanup);
 
-    // تأخير بسيط عشان المتصفح يرسم النسخة قبل الطباعة
-    setTimeout(() => window.print(), 100);
-}
-	function genCode() {
-    const A = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    let s = '';
-    crypto.getRandomValues(new Uint8Array(10)).forEach(x => s += A[x % A.length]);
-    return 'CCNA-' + s.slice(0, 5) + '-' + s.slice(5);
+    // استنى الخطوط (توقيع الدكتور) قبل الطباعة
+    (document.fonts ? document.fonts.ready : Promise.resolve())
+        .then(() => setTimeout(() => window.print(), 150));
 }
 
 function wrongHTML(w) {
