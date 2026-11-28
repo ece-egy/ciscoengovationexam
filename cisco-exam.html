@@ -890,10 +890,10 @@ document.getElementById('cert-code').textContent = code;
         document.body.appendChild(holder);
 
         const opt = {
-            margin: [13, 6, 0, 6], // [أعلى, يسار, أسفل, يمين] بالمم: الشهادة في منتصف A4 بهوامش آمنة
+            margin: [13, 13, 0, 6], // [أعلى, يسار, أسفل, يمين] بالمم: الشهادة في منتصف A4 بهوامش آمنة
             filename: 'Cisco_Certificate.pdf',
             image: { type: 'jpeg', quality: 1 },
-            html2canvas: { scale: 2, useCORS: true, scrollX: 0, scrollY: 0, backgroundColor: '#ffffff' },
+            html2canvas: { scale: 1, useCORS: true, scrollX: 0, scrollY: 0, backgroundColor: '#ffffff' },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape', compress: true }
         };
         const done = () => holder.remove();
