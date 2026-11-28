@@ -558,6 +558,7 @@ position: relative;
     </div>
             <div class="form-group"><label>الاسم الكامل بالإنجليزية (سيظهر في الشهادة)</label><input type="text" id="reg-name" placeholder="E.g. Mohanad Al-mothafer" required></div>
             <div class="form-group"><label>البريد الإلكتروني</label><input type="email" id="reg-email" required></div>
+			<div style="font-size:12px;color:#64748b;direction:rtl;margin-top:4px">يُقبل بريد Gmail فقط، وسيصلك رابط تفعيل عليه.</div>
             <div class="form-group"><label>كلمة المرور</label><input type="password" id="reg-pass" required></div>
             <button class="btn" onclick="handleRegister()">إنشاء الحساب</button>
 			<p id="reg-msg" style="text-align:center;font-weight:bold;direction:rtl;line-height:1.8"></p>
@@ -1065,7 +1066,8 @@ function showRecord(r) {
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, doc, getDoc, writeBatch, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getAuth, setPersistence, inMemoryPersistence, createUserWithEmailAndPassword,
-         signInWithEmailAndPassword, signOut, deleteUser } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+         signInWithEmailAndPassword, signOut, deleteUser, updateProfile, sendEmailVerification }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyD2PXm1tg0JIWd3gUSAr7yiyn_mRCtFCII",
@@ -1134,10 +1136,54 @@ async function routeStudent(msgId) {
   }
 }
 
+// يُستدعى بعد أي تسجيل دخول ناجح
+async function afterSignIn(msgId) {
+  const u = auth.currentUser;
+  await u.reload();
+
+  if (!u.emailVerified) {
+    try { await sendEmailVerification(u); } catch (_) {}
+    await signOut(auth);
+    say(msgId, '📧 لم يتم تفعيل بريدك بعد. أرسلنا رابط تفعيل جديد إلى Gmail الخاص بك، افتحه (وراجع Spam) ثم سجّل الدخول من جديد.');
+    return;
+  }
+
+  await u.getIdToken(true); // تحديث التوكن ليحمل email_verified
+
+  try {
+    const snap = await getDoc(doc(db, 'students', u.uid));
+    if (!snap.exists()) {
+      // أول دخول بعد التفعيل: هنا فقط يُحجز الاسم والبريد
+      const name = (u.displayName || '').trim();
+      const key = nameKey(name);
+      if (!key) { say(msgId, '❌ بيانات الحساب ناقصة، أنشئ حساباً جديداً.'); await signOut(auth); return; }
+      const b = writeBatch(db);
+      b.set(doc(db, 'names', key), { uid: u.uid, status: 'registered', total: null });
+      b.set(doc(db, 'emails', emailKey(u.email)), { uid: u.uid });
+      b.set(doc(db, 'students', u.uid), {
+        uid: u.uid, name, nameKey: key, email: u.email, status: 'registered', createdAt: serverTimestamp()
+      });
+      try { await b.commit(); }
+      catch (e) {
+        console.error(e);
+        await deleteUser(u).catch(() => {});
+        say(msgId, '⛔ هذا الطالب أو هذا البريد مسجّل من قبل بحساب آخر. لا يمكن إنشاء حساب جديد.');
+        return;
+      }
+    }
+  } catch (e) {
+    console.error(e);
+    say(msgId, '⚠️ تعذّر قراءة بيانات الحساب ' + errText(e));
+    return;
+  }
+  await routeStudent(msgId);
+}
+
 window.handleLogin = async () => {
   const email = $('login-email').value.trim().toLowerCase();
   const pass = $('login-pass').value;
   if (!email || !pass) { say('login-msg', 'أدخل البريد وكلمة المرور'); return; }
+  if (!validGmail(email)) { say('login-msg', '❌ يُقبل بريد Gmail فقط'); return; }
   say('login-msg', 'جاري الدخول...', '#555');
   try { await signInWithEmailAndPassword(auth, email, pass); }
   catch (e) {
@@ -1146,7 +1192,7 @@ window.handleLogin = async () => {
     say('login-msg', bad.includes(e.code) ? '❌ البريد أو كلمة المرور غير صحيحة' : '⚠️ تعذّر تسجيل الدخول ' + errText(e));
     return;
   }
-  await routeStudent('login-msg');
+  await afterSignIn('login-msg');
 };
 
 window.handleRegister = async () => {
@@ -1154,10 +1200,14 @@ window.handleRegister = async () => {
   const email = $('reg-email').value.trim().toLowerCase();
   const pass = $('reg-pass').value;
   if (!name || !email || !pass) { say('reg-msg', 'املأ كل الحقول'); return; }
+  if (!validGmail(email)) { say('reg-msg', '❌ يُقبل بريد Gmail صحيح فقط (مثال: name@gmail.com)'); return; }
   if (pass.length < 6) { say('reg-msg', 'كلمة المرور 6 أحرف على الأقل'); return; }
   const key = nameKey(name);
   if (!key) { say('reg-msg', 'اكتب اسماً صحيحاً'); return; }
   say('reg-msg', 'جاري التحقق...', '#555');
+const GMAIL = /^[a-z0-9.]+(\+[a-z0-9._-]+)?@gmail\.com$/;
+const emailKey = e => e.split('@')[0].split('+')[0].replace(/\./g, '');
+const validGmail = e => GMAIL.test(e) && emailKey(e).length >= 6;
 
   try {
     const nm = await getDoc(doc(db, 'names', key));
@@ -1173,7 +1223,7 @@ window.handleRegister = async () => {
   catch (e) {
     console.error(e);
     if (e.code === 'auth/email-already-in-use') {
-      try { await signInWithEmailAndPassword(auth, email, pass); await routeStudent('reg-msg'); }
+      try { await signInWithEmailAndPassword(auth, email, pass); await afterSignIn('reg-msg'); }
       catch (_) { say('reg-msg', '❌ هذا البريد مسجّل من قبل. سجّل الدخول من الصفحة الرئيسية.'); }
       return;
     }
@@ -1181,21 +1231,14 @@ window.handleRegister = async () => {
     return;
   }
 
-  const b = writeBatch(db);
-  b.set(doc(db, 'names', key), { uid: cred.user.uid, status: 'registered', total: null });
-  b.set(doc(db, 'students', cred.user.uid), {
-    uid: cred.user.uid, name, nameKey: key, email, status: 'registered', createdAt: serverTimestamp()
-  });
-  try { await b.commit(); }
-  catch (e) {
-    console.error(e);
-    await deleteUser(cred.user).catch(() => {});
-    say('reg-msg', '⛔ تعذّر حفظ الطالب (الاسم مسجّل من قبل أو القواعد غير منشورة) ' + errText(e));
-    return;
-  }
+  try {
+    await updateProfile(cred.user, { displayName: name });
+    await sendEmailVerification(cred.user);
+  } catch (e) { console.error(e); }
+
   await signOut(auth);
   say('reg-msg', '');
-  alert('تم إنشاء الحساب بنجاح، سجّل الدخول الآن.');
+  alert('تم إنشاء الحساب ✅\nأرسلنا رابط تفعيل إلى بريدك Gmail.\nافتحه (وراجع مجلد Spam) ثم سجّل الدخول.');
   switchScreen('login-screen');
 };
 
