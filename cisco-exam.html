@@ -1036,7 +1036,12 @@ function printCertificate() {
     (document.fonts ? document.fonts.ready : Promise.resolve())
         .then(() => setTimeout(() => window.print(), 150));
 }
-
+function genCode() {
+    const A = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let s = '';
+    crypto.getRandomValues(new Uint8Array(10)).forEach(x => s += A[x % A.length]);
+    return 'CCNA-' + s.slice(0, 5) + '-' + s.slice(5);
+}
 function wrongHTML(w) {
     if (!w || !w.length) return '<li style="color:#16a34a;margin-top:10px">🎉 لا توجد أخطاء في الأسئلة النظرية</li>';
     return '<li style="margin-top:12px"><b>❌ الأسئلة الخاطئة (' + w.length + '):</b></li>' +
