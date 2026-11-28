@@ -442,6 +442,7 @@ position: relative;
             <div class="form-group"><label>البريد الإلكتروني</label><input type="email" id="login-email" required></div>
             <div class="form-group"><label>كلمة المرور</label><input type="password" id="login-pass" required></div>
             <button class="btn" onclick="handleLogin()">تسجيل الدخول</button>
+            <p id="login-msg" style="text-align:center;font-weight:bold;direction:rtl"></p>
             <div class="auth-toggle">ليس لديك حساب؟ <span onclick="switchScreen('register-screen')">سجل الآن هنا</span></div>
 			<div class="auth-toggle"><span onclick="switchScreen('verify-screen')">🔍 التحقق من شهادة</span></div>
         </div>
@@ -472,7 +473,7 @@ position: relative;
             <button class="btn" onclick="handleRegister()">إنشاء الحساب</button>
 			<p id="reg-msg" style="text-align:center;font-weight:bold;direction:rtl;line-height:1.8"></p>
             <div class="auth-toggle">لديك حساب بالفعل؟ <span onclick="switchScreen('login-screen')">تسجيل الدخول</span></div>
-			<p id="login-msg" style="text-align:center;font-weight:bold;direction:rtl"></p>
+			
         </div>
     </div>
 <div id="verify-screen" class="screen" style="text-align:center">
@@ -869,14 +870,7 @@ generatedQuestions.forEach((it, n) => {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
     }
-    function handleRegister() {
-        const name = document.getElementById('reg-name').value.trim();
-        const email = document.getElementById('reg-email').value.trim().toLowerCase();
-        const pass = document.getElementById('reg-pass').value;
-        if(!name || !email || !pass) { alert("Please fill all fields"); return; }
-        localStorage.setItem(email, JSON.stringify({ name: name, pass: pass }));
-        alert("Registration Successful!"); switchScreen('login-screen');
-    }
+   
     function enterExam(name) {
     currentUser = name;
     document.getElementById('user-display').textContent = "Student: " + name;
@@ -997,7 +991,7 @@ const $ = id => document.getElementById(id);
 const say = (id, text, color = '#dc2626') => { const e = $(id); e.style.color = color; e.textContent = text; };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const nameKey = n => n.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '');
-
+const errText = e => `(${e.code || e.message})`;
 function dupMessage(name, n) {
   if (n.status === 'passed')
     return `⛔ الطالب «${name}» مسجّل من قبل وقد اجتاز الاختبار بنسبة ${n.total}%. لا يمكن إنشاء حساب جديد بنفس الاسم. للتحقق من الشهادة استخدم «التحقق من شهادة» من صفحة الدخول.`;
