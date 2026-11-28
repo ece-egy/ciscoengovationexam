@@ -1212,10 +1212,8 @@ window.handleRegister = async () => {
   const key = nameKey(name);
   if (!key) { say('reg-msg', 'اكتب اسماً صحيحاً'); return; }
   say('reg-msg', 'جاري التحقق...', '#555');
+
   try {
-    const nm = await getDoc(doc(db, 'names', key));
-    if (nm.exists()) { say('reg-msg', dupMessage(name, nm.data())); return; }
-  }   try {
     const nm = await getDoc(doc(db, 'names', key));
     if (nm.exists()) { say('reg-msg', dupMessage(name, nm.data())); return; }
   } catch (e) {
